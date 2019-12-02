@@ -1,0 +1,4 @@
+catalogueapi.egg-info/
+*.pyc
+__pycache
+config.ini__
