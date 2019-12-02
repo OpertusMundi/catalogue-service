@@ -4,13 +4,19 @@
 
 A simple catalogue api with functions create, update, delete, get all
 
+#installation
+
+pip install -r requirements.txt
+python setup.py develop
+
+run with: python app.py
 
 
 config.ini file
 -------
 
 [DEFAULT]
- Flask settings
+Flask settings
 
 FLASK_SERVER_NAME = localhost:port
 FLASK_DEBUG = true 	(set to false on production environments)
