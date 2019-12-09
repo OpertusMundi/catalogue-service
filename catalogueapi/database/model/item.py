@@ -1,3 +1,4 @@
+import json
 from flask_sqlalchemy import SQLAlchemy
 
 from catalogueapi.database import db
@@ -10,9 +11,11 @@ class Item(db.Model):
     description = db.Column('description', db.Text,
                 nullable=False, index=True)
     creator = db.Column('creator', db.Text, index=True)
+    item_json = db.Column('item_json', db.JSON)
 
     def __init__(self,data):
         self.item_id = data.get('item_id')
         self.title = data.get('title')
         self.description = data.get('description')
         self.creator = data.get('creator')
+        self.item_json = json.dumps(data)
