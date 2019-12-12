@@ -3,7 +3,8 @@ import logging
 from flask import request
 from flask_restplus import Resource
 from catalogueapi.database.actions.item import create_item, delete_item, update_item
-from catalogueapi.api.serializers import item
+from catalogueapi.api.serializers import item, page_of_items
+from catalogueapi.api.parsers import pagination_arguments
 from catalogueapi.api.restplus import api
 from catalogueapi.database.model.item import Item
 
@@ -15,13 +16,18 @@ ns = api.namespace('items', description='Operations related to items')
 @ns.route('/')
 class ItemCollection(Resource):
 
-    @api.marshal_list_with(item)
+    @api.expect(pagination_arguments)
+    @api.marshal_list_with(page_of_items)
     def get(self):
         """
-        Returns list of items.
+        Returns a list of items.
         """
-        items = Item.query.all()
-        return items
+        args = pagination_arguments.parse_args(request)
+        page = args.get('page')
+        per_page = args.get('per_page')
+        items = Item.query
+        results = items.paginate(page, per_page, error_out=False)
+        return results
 
     @api.response(201, 'Item successfully created.')
     @api.expect(item)
@@ -71,5 +77,3 @@ class ItemUnit(Resource):
         """
         delete_item(id)
         return None, 204
-
-
