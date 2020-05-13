@@ -21,11 +21,11 @@ Use the `config.ini` file:
 FLASK_SERVER_NAME = localhost:port
 FLASK_DEBUG = true 	(set to false on production environments)
 
-;Flask-Restplus settings
-RESTPLUS_SWAGGER_UI_DOC_EXPANSION = list
-RESTPLUS_VALIDATE = true
-RESTPLUS_MASK_SWAGGER = false
-RESTPLUS_ERROR_404_HELP = false
+;Flask-RESTX settings
+RESTX_SWAGGER_UI_DOC_EXPANSION = list
+RESTX_VALIDATE = true
+RESTX_MASK_SWAGGER = false
+RESTX_ERROR_404_HELP = false
 
 ;SQLAlchemy settings
 SQLALCHEMY_DATABASE_URI = postgresql://username:password@host:port/database

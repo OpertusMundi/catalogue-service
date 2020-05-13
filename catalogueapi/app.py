@@ -4,7 +4,7 @@ import configparser
 import os
 from flask import Flask, Blueprint
 from catalogueapi.api.items import ns as item_namespace
-from catalogueapi.api.restplus import api
+from catalogueapi.api.restx import api
 from catalogueapi.database import db
 
 
@@ -21,10 +21,10 @@ def configure_app(flask_app):
     flask_app.config['SERVER_NAME'] = config.get('DEFAULT','FLASK_SERVER_NAME')
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = config.get('DEFAULT','SQLALCHEMY_DATABASE_URI')
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = config.get('DEFAULT','SQLALCHEMY_TRACK_MODIFICATIONS')
-    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = config.get('DEFAULT','RESTPLUS_SWAGGER_UI_DOC_EXPANSION')
-    flask_app.config['RESTPLUS_VALIDATE'] = config.get('DEFAULT','RESTPLUS_VALIDATE')
-    flask_app.config['RESTPLUS_MASK_SWAGGER'] = config.get('DEFAULT','RESTPLUS_MASK_SWAGGER')
-    flask_app.config['ERROR_404_HELP'] = config.get('DEFAULT','RESTPLUS_ERROR_404_HELP')
+    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = config.get('DEFAULT','RESTX_SWAGGER_UI_DOC_EXPANSION')
+    flask_app.config['RESTX_VALIDATE'] = config.get('DEFAULT','RESTX_VALIDATE')
+    flask_app.config['RESTX_MASK_SWAGGER'] = config.get('DEFAULT','RESTX_MASK_SWAGGER')
+    flask_app.config['ERROR_404_HELP'] = config.get('DEFAULT','RESTX_ERROR_404_HELP')
 
 
 def initialize_app(flask_app):

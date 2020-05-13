@@ -1,13 +1,13 @@
 import logging
 import traceback
 import configparser
-from flask_restplus import Api
+from flask_restx import Api
 from sqlalchemy.orm.exc import NoResultFound
 
 log = logging.getLogger(__name__)
 
 api = Api(version='1.0', title='A simple api',
-          description='A simple demonstration of a Flask RestPlus powered API')
+          description='A simple demonstration of a Flask RESTX powered API')
 
 
 config = configparser.ConfigParser()

@@ -1,17 +1,16 @@
 import logging
 
 from flask import request
-from flask_restplus import Resource
+from flask_restx import Resource
 from catalogueapi.database.actions.item import create_item, delete_item, update_item
 from catalogueapi.api.serializers import item, page_of_items
 from catalogueapi.api.parsers import pagination_arguments
-from catalogueapi.api.restplus import api
+from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item
 
 log = logging.getLogger(__name__)
 
 ns = api.namespace('items', description='Operations related to items')
-
 
 @ns.route('/')
 class ItemCollection(Resource):

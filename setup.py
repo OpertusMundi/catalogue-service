@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='catalogueapi',
     version='0.0.1',
-    description='Boilerplate code for a RESTful API based on Flask-RESTPlus',
+    description='Boilerplate code for a RESTful API based on Flask-RESTX',
     author='Nikiforos Leonidakis',
 
     classifiers=[
@@ -13,9 +13,9 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
 
-    keywords='rest restful api flask swagger openapi flask-restplus',
+    keywords='rest restful api flask swagger openapi flask-restx',
 
     packages=find_packages(),
 
-    install_requires=['flask-restplus==0.13', 'Flask-SQLAlchemy==2.4.1'],
+    install_requires=['flask-restx==0.2', 'Flask-SQLAlchemy==2.4.1'],
 )
