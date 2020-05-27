@@ -5,6 +5,7 @@ from catalogueapi.database import db
 from geoalchemy2.types import Geometry
 from geojson import Polygon
 
+from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB
 
 
@@ -52,6 +53,16 @@ class Item(db.Model):
 
     geojson = db.Column('geojson', JSONB)
 
+
+    ts_vector = func.to_tsvector('english', geojson)
+
+    __table_args__ = (
+        db.Index(
+            'jsonindex',
+            ts_vector,
+            postgresql_using='gin'
+        ),
+    )
 
     def __init__(self, data):
         coords = []

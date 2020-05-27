@@ -1,12 +1,17 @@
 import logging
+import json
 
 from flask import request
 from flask_restx import Resource
+from flask_restx import marshal
 from catalogueapi.database.actions.item import create_item, delete_item, update_item
 from catalogueapi.api.serializers import item, page_of_items
-from catalogueapi.api.parsers import pagination_arguments
+from catalogueapi.api.parsers import pagination_arguments, search_arguments
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item
+
+from sqlalchemy.sql import func
+
 
 log = logging.getLogger(__name__)
 
@@ -56,8 +61,8 @@ class ItemUnit(Resource):
     def put(self, id):
         """
         Updates a item.
-        Use this method to change the name of a item.
-        * Send a JSON object with the new name in the request body.
+        Use this method to change a property of an item.
+        * Send a JSON object with the new value in the request body.
         ```
         {
           "name": "New item Name"
@@ -76,3 +81,25 @@ class ItemUnit(Resource):
         """
         delete_item(id)
         return None, 204
+
+
+@ns.route('/search')
+@api.response(404, 'Items not found.')
+@api.response(200, 'Items found.')
+class ItemCollection(Resource):
+
+    @api.expect(search_arguments)
+    def get(self):
+        """
+        Returns a list of items.
+        """
+        args = search_arguments.parse_args(request)
+        log.debug(args)
+        q = args.get('q')
+        
+        items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q))).all()
+        if items:
+            return marshal(items, item), 200
+        else:
+            return {'message': 'No items found'}, 404
+
