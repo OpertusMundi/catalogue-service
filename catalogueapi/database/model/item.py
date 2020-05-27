@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 from catalogueapi.database import db
 from geoalchemy2.types import Geometry
+from geojson import Polygon
+
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 class Item(db.Model):
@@ -22,7 +25,7 @@ class Item(db.Model):
     revision_date = db.Column('revision_date', db.Date, index=True)
 
     geographic_location = db.Column('geographic_location', Geometry(
-        geometry_type='POLYGON', srid=4326), index=True)
+        geometry_type='POLYGON'), index=True)
     date_start = db.Column('date_start', db.Date, index=True)
     date_end = db.Column('date_end', db.Date, index=True)
     resource_locator = db.Column('resource_locator', db.Text, index=True)
@@ -47,10 +50,34 @@ class Item(db.Model):
     lineage = db.Column('lineage', db.Text, index=True)
     parent_id = db.Column('parent_id', db.Text, index=True)
 
-    item_json = db.Column('item_json', db.JSON)
+    geojson = db.Column('geojson', JSONB)
+
 
     def __init__(self, data):
-        self.id = data.get('id')
-        self.title = data.get('title')
-        self.description = data.get('description')
-        self.item_json = data
+        coords = []
+        for key in data:
+            if key == 'geographic_location':
+                coords = data[key]['coordinates']
+                self.geographic_location = 'POLYGON((' \
+                    + coords[0].replace(",", "") + ',' \
+                    + coords[1].replace(",", "") + ',' \
+                    + coords[2].replace(",", "") + ',' \
+                    + coords[3].replace(",", "") + ',' \
+                    + coords[4].replace(",", "") + '))'
+            else:
+                setattr(self, key, data[key])
+
+        # build geojson
+        geojson = \
+            {
+                "id": data.get('id'),
+                "type": "Feature",
+                "geometry": {
+                        "type": "Polygon",
+                        "coordinates": coords
+                },
+                "properties": data
+
+            }
+        self.geojson = geojson
+

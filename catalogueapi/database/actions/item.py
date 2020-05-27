@@ -22,7 +22,7 @@ def update_item(id, data):
     data['id'] = id
     item.title = data.get('title')
     item.description = data.get('description')
-    item.creator = data.get('creator')
+    item.geojson = data
     session.add(item)
     session.commit()
     log.info('Updated item %s', id)
