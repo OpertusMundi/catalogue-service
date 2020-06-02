@@ -1,6 +1,7 @@
 
 import uuid
 import logging
+import json
 
 from catalogueapi.database import db
 from catalogueapi.database.model.item import Item 
@@ -10,21 +11,20 @@ session = db.session
 
 def create_item(data):
     if not 'id' in data or not is_valid_uuid(data['id']):
-        data['id'] = str(uuid.uuid4())
-    item = Item(data)
+        id = str(uuid.uuid4())
+    item = Item()
+    item.update(id, data)
     session.add(item)
     session.commit()
-    log.info('Created item %s', data['id'])
+    log.info('Created item %s', id)
 
 def update_item(id, data):
-
+    
     item = session.query(Item).get(id)
-    data['id'] = id
-    item.title = data.get('title')
-    item.description = data.get('description')
-    item.geojson = data
+    item.update(id, data)
     session.add(item)
     session.commit()
+    
     log.info('Updated item %s', id)
 
 def delete_item(id):

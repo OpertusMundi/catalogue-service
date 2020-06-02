@@ -6,8 +6,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 log = logging.getLogger(__name__)
 
-api = Api(version='1.0', title='A simple api',
-          description='A simple demonstration of a Flask RESTX powered API')
+api = Api(version='1.0', title='A simple catalogue api',
+          description='A simple implementation of a Flask RESTX powered API')
 
 
 config = configparser.ConfigParser()

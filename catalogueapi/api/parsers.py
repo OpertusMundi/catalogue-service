@@ -7,3 +7,8 @@ pagination_arguments.add_argument('per_page', type=int, required=False,
 
 search_arguments = reqparse.RequestParser()
 search_arguments.add_argument('q', type=str, required=True, default="", help='Search query')
+
+
+pagination_arguments = reqparse.RequestParser()
+pagination_arguments.add_argument('page', type=int, required=False, default=1, help='Page number')
+

@@ -3,10 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 from catalogueapi.database import db
 from geoalchemy2.types import Geometry
-from geojson import Polygon
 
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB
+
+from shapely.geometry import shape, mapping
+from geoalchemy2.shape import to_shape 
+import shapely.wkt
+import datetime
+from sqlalchemy.inspection import inspect
 
 
 class Item(db.Model):
@@ -14,7 +19,7 @@ class Item(db.Model):
 
     id = db.Column('id', db.Text, primary_key=True)
     title = db.Column('title', db.Text, nullable=False, index=True)
-    description = db.Column('description', db.Text, index=True)
+    abstract = db.Column('abstract', db.Text, index=True)
     type = db.Column('type', db.Text, index=True)
     spatial_data_service_type = db.Column(
         'spatial_data_service_type', db.Text, index=True)
@@ -51,10 +56,9 @@ class Item(db.Model):
     lineage = db.Column('lineage', db.Text, index=True)
     parent_id = db.Column('parent_id', db.Text, index=True)
 
-    geojson = db.Column('geojson', JSONB)
+    item_geojson = db.Column('item_geojson', JSONB)
 
-
-    ts_vector = func.to_tsvector('english', geojson)
+    ts_vector = func.to_tsvector('english', item_geojson)
 
     __table_args__ = (
         db.Index(
@@ -64,31 +68,47 @@ class Item(db.Model):
         ),
     )
 
-    def __init__(self, data):
-        coords = []
-        for key in data:
-            if key == 'geographic_location':
-                coords = data[key]['coordinates']
-                self.geographic_location = 'POLYGON((' \
-                    + coords[0].replace(",", "") + ',' \
-                    + coords[1].replace(",", "") + ',' \
-                    + coords[2].replace(",", "") + ',' \
-                    + coords[3].replace(",", "") + ',' \
-                    + coords[4].replace(",", "") + '))'
-            else:
-                setattr(self, key, data[key])
+    def update(self, id, data):
+        properties = data.get('properties')
+        if 'geographic_location' in data:
+            geom = data['geographic_location']
+            self.geographic_location = shape(geom).wkt
+        for key in properties:
+            setattr(self, key, properties[key])
+        self.id = id
+        item_geojson = self.serialize()
+        
+        self.item_geojson = item_geojson
+        return
 
+    # convert to geojson format
+    def serialize(self):
+        # build properties object
+        p = {}
+        for c in inspect(self).attrs.keys():
+            attr = getattr(self, c)
+            if c == 'geographic_location':
+                # Convert to a shapely Polygon object to get mapping
+                if isinstance(attr,str):
+                    g = shapely.wkt.loads(attr)
+                    geom = mapping(g)
+                else:
+                    g = to_shape(attr)
+                    geom = mapping(g)
+            
+            elif isinstance(attr, datetime.date):
+                p[c] = attr.isoformat()
+            elif c =='id' or c == 'item_geojson':
+                continue
+            else:
+                p[c] = attr
         # build geojson
-        geojson = \
+        item_geojson = \
             {
-                "id": data.get('id'),
+                "id": self.id,
                 "type": "Feature",
-                "geometry": {
-                        "type": "Polygon",
-                        "coordinates": coords
-                },
-                "properties": data
+                "geometry": geom,
+                "properties": p
 
             }
-        self.geojson = geojson
-
+        return item_geojson
