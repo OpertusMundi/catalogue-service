@@ -6,7 +6,7 @@ from flask_restx import Resource
 from flask_restx import marshal
 from catalogueapi.database.actions.item import create_item, delete_item, update_item
 from catalogueapi.api.serializers import item_geojson, page_of_items
-from catalogueapi.api.parsers import pagination_arguments, search_arguments
+from catalogueapi.api.parsers import pagination_arguments, search_arguments, id_args
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item
 
@@ -99,3 +99,19 @@ class ItemCollection(Resource):
             return result, 200
         else:
             return {'message': 'No items found'}, 404
+
+@ns.route('/get')
+@api.response(404, 'Items not found.')
+@api.response(200, 'Items found.')
+class ItemCollection(Resource):
+    @api.expect(id_args)
+    def get(self):
+        """
+        Returns a list of items by ids.
+        """
+        ids = id_args.parse_args(request).get('id')
+        result = []
+        for id in ids:
+            item = Item.query.filter(Item.id == id).one()
+            result.append(item.item_geojson)
+        return result, 200
