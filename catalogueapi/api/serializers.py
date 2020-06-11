@@ -56,7 +56,7 @@ properties = api.model('Properties of an item', {
 item_geojson = api.model('The item in geojson format',{
     'id': fields.String(readOnly=True, description='An unambiguous reference to the resource within a given context'),
     'type': fields.String(description='The type of the geojson', default='Feature'),
-    'geographic_location': fields.Nested(polygon, description='The spatial extent of the resource, the spatial \
+    'geometry': fields.Nested(polygon, description='The spatial extent of the resource, the spatial \
                     applicability of the resource, or the jurisdiction under which the resource is relevant.'),
     'properties':fields.Nested(properties, description='The properties of the geojson.')
 })

@@ -70,8 +70,8 @@ class Item(db.Model):
 
     def update(self, id, data):
         properties = data.get('properties')
-        if 'geographic_location' in data:
-            geom = data['geographic_location']
+        if 'geometry' in data:
+            geom = data['geometry']
             self.geographic_location = shape(geom).wkt
         for key in properties:
             setattr(self, key, properties[key])

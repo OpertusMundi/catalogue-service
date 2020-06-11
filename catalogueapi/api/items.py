@@ -9,7 +9,6 @@ from catalogueapi.api.serializers import item_geojson, page_of_items
 from catalogueapi.api.parsers import pagination_arguments, search_arguments, id_args
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item
-
 from sqlalchemy.sql import func
 
 
@@ -82,23 +81,26 @@ class ItemUnit(Resource):
 @api.response(200, 'Items found.')
 class ItemCollection(Resource):
 
-    @api.expect(search_arguments)
+    @api.marshal_list_with(page_of_items)
+    @api.expect(search_arguments, validate=False)
     def get(self):
         """
         Searches and returns a list of items.
         """
         args = search_arguments.parse_args(request)
-        log.debug(args)
         q = args.get('q')
-        
-        items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q))).all()
-        if items:
-            result = []
-            for i in items:
-                result.append(i.item_geojson)
+        page = args.get('page')
+        per_page = args.get('per_page')
+        items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q)))
+        result = items.paginate(page, per_page, error_out=False)
+        if result.items:
+            for i in result.items:
+                result.items.append(i.item_geojson)
+                result.items.remove(i)
             return result, 200
         else:
-            return {'message': 'No items found'}, 404
+            return result, 404
+
 
 @ns.route('/get')
 @api.response(404, 'Items not found.')
