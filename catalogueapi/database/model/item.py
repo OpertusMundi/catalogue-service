@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB
 
 from shapely.geometry import shape, mapping
-from geoalchemy2.shape import to_shape 
+from geoalchemy2.shape import to_shape
 import shapely.wkt
 import datetime
 from sqlalchemy.inspection import inspect
@@ -77,7 +77,7 @@ class Item(db.Model):
             setattr(self, key, properties[key])
         self.id = id
         item_geojson = self.serialize()
-        
+    
         self.item_geojson = item_geojson
         return
 
@@ -89,16 +89,16 @@ class Item(db.Model):
             attr = getattr(self, c)
             if c == 'geographic_location':
                 # Convert to a shapely Polygon object to get mapping
-                if isinstance(attr,str):
+                if isinstance(attr, str):
                     g = shapely.wkt.loads(attr)
                     geom = mapping(g)
                 else:
                     g = to_shape(attr)
                     geom = mapping(g)
-            
+
             elif isinstance(attr, datetime.date):
                 p[c] = attr.isoformat()
-            elif c =='id' or c == 'item_geojson':
+            elif c == 'id' or c == 'item_geojson':
                 continue
             else:
                 p[c] = attr
