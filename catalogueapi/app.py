@@ -20,11 +20,11 @@ def configure_app(flask_app):
 
     flask_app.config['SERVER_NAME'] = config.get('DEFAULT','FLASK_SERVER_NAME')
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = config.get('DEFAULT','SQLALCHEMY_DATABASE_URI')
-    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = config.get('DEFAULT','SQLALCHEMY_TRACK_MODIFICATIONS')
+    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = config.getboolean('DEFAULT','SQLALCHEMY_TRACK_MODIFICATIONS')
     flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = config.get('DEFAULT','RESTX_SWAGGER_UI_DOC_EXPANSION')
-    flask_app.config['RESTX_VALIDATE'] = config.get('DEFAULT','RESTX_VALIDATE')
-    flask_app.config['RESTX_MASK_SWAGGER'] = config.get('DEFAULT','RESTX_MASK_SWAGGER')
-    flask_app.config['ERROR_404_HELP'] = config.get('DEFAULT','RESTX_ERROR_404_HELP')
+    flask_app.config['RESTX_VALIDATE'] = config.getboolean('DEFAULT','RESTX_VALIDATE')
+    flask_app.config['RESTX_MASK_SWAGGER'] = config.getboolean('DEFAULT','RESTX_MASK_SWAGGER')
+    flask_app.config['ERROR_404_HELP'] = config.getboolean('DEFAULT','RESTX_ERROR_404_HELP')
 
 
 def initialize_app(flask_app):
@@ -42,7 +42,7 @@ def initialize_app(flask_app):
 def main():
     initialize_app(app)
     log.info('>>>>> Starting development server at http://{}/api/ <<<<<'.format(app.config['SERVER_NAME']))
-    app.run(debug=config.get('DEFAULT','FLASK_DEBUG'))
+    app.run(debug=config.getboolean('DEFAULT','FLASK_DEBUG'))
 
 
 if __name__ == "__main__":
