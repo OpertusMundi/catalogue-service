@@ -6,7 +6,7 @@ from geoalchemy2.types import Geometry
 
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB
-
+from sqlalchemy.types import ARRAY 
 from shapely.geometry import shape, mapping
 from geoalchemy2.shape import to_shape
 import shapely.wkt
@@ -16,7 +16,6 @@ from sqlalchemy.inspection import inspect
 
 class Item(db.Model):
     __tablename__ = "items"
-
     id = db.Column('id', db.Text, primary_key=True)
     title = db.Column('title', db.Text, nullable=False, index=True)
     abstract = db.Column('abstract', db.Text, index=True)
@@ -24,7 +23,7 @@ class Item(db.Model):
     spatial_data_service_type = db.Column(
         'spatial_data_service_type', db.Text, index=True)
     format = db.Column('format', db.Text, index=True)
-    keywords = db.Column('keywords', db.Text, index=True)
+    keywords = db.Column('keywords', ARRAY(db.Text), index=True)
     publisher_name = db.Column('publisher_name', db.Text, index=True)
     publisher_email = db.Column('publisher_email', db.Text, index=True)
     language = db.Column('language', db.Text, index=True)
