@@ -24,6 +24,7 @@ properties = api.model('Properties of an item', {
     'keywords': fields.List(fields.String(description='The topic of the resource')),
     'publisher_name': fields.String(description='Name of an entity responsible for making the resource available'),
     'publisher_email': fields.String(description='Email of an entity responsible for making the resource available'),
+    'publisher_id': fields.String(description='Id of an entity responsible for making the resource available'),
     'language': fields.String(description='A language of the resource'),
     'date_start': fields.Date(description='The temporal extent of the resource (start date)'),
     'date_end': fields.Date(description='The temporal extent of the resource (end date))'),
@@ -54,7 +55,9 @@ properties = api.model('Properties of an item', {
     'metadata_date': fields.Date(description='The date which specifies when the metadata record was created or updated'),
     'coupled_resource': fields.String(description='Provides information about the datasets that the service operates on'),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
-    'parent_id': fields.String(description='Provides the ID of a parent dataset.')
+    'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
+    'pricing_model': fields.Raw(description='Pricing model of the dataset'),
+    'store_statistics': fields.Raw(description='Statistics about the store')
 })
 
 item_geojson = api.model('The item in geojson format',{

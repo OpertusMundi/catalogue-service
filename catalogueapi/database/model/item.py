@@ -26,6 +26,7 @@ class Item(db.Model):
     keywords = db.Column('keywords', ARRAY(db.Text), index=True)
     publisher_name = db.Column('publisher_name', db.Text, index=True)
     publisher_email = db.Column('publisher_email', db.Text, index=True)
+    publisher_id = db.Column('publisher_id', db.Text, index=True)
     language = db.Column('language', db.Text, index=True)
     date_start = db.Column('date_start', db.Date, index=True)
     date_end = db.Column('date_end', db.Date, index=True)
@@ -62,6 +63,9 @@ class Item(db.Model):
 
     item_geojson = db.Column('item_geojson', JSONB)
 
+    pricing_model = db.Column('pricing_model', JSONB)
+    store_statistics = db.Column('store_statistics', JSONB)
+
     ts_vector = func.to_tsvector('english', item_geojson)
 
     __table_args__ = (
@@ -77,8 +81,9 @@ class Item(db.Model):
         if 'geometry' in data:
             geom = data['geometry']
             self.geographic_location = shape(geom).wkt
-        for key in properties:
-            setattr(self, key, properties[key])
+        for key in properties :
+            if properties[key]:
+                setattr(self, key, properties[key])
         self.id = id
         item_geojson = self.serialize()
     
