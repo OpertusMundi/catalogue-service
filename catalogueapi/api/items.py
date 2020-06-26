@@ -92,6 +92,11 @@ class ItemCollection(Resource):
         q = args.get('q')
         page = args.get('page')
         per_page = args.get('per_page')
+        if not q:
+            items = Item.query
+            result = items.paginate(page, per_page, error_out=False)
+            return {'result': marshal(result, page_of_items), 'success': True, 'message':
+                     {'code':200, 'description': 'All items' } }, 200
         items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q)))
         result = items.paginate(page, per_page, error_out=False)
         items_geojson = []
