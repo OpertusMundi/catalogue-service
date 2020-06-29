@@ -89,17 +89,24 @@ class ItemCollection(Resource):
         Searches and returns a list of items.
         """
         args = search_arguments.parse_args(request)
+
         q = args.get('q')
         page = args.get('page')
         per_page = args.get('per_page')
-        if not q:
-            items = Item.query
-            result = items.paginate(page, per_page, error_out=False)
-            return {'result': marshal(result, page_of_items), 'success': True, 'message':
-                     {'code':200, 'description': 'All items' } }, 200
-        items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q)))
+
+        # Initialize items query
+        items = Item.query
+        
+        # Add filtering (optional)
+        if q and q.strip() != "":
+            items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q)))
+
+        # Add pagination
         result = items.paginate(page, per_page, error_out=False)
+
         items_geojson = []
+
+        # Post-process to get item_geojson
         if result.items:
             for i in result.items:
                 items_geojson.append(i.item_geojson)
