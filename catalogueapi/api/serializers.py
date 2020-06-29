@@ -56,7 +56,7 @@ properties = api.model('Properties of an item', {
     'coupled_resource': fields.String(description='Provides information about the datasets that the service operates on'),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
-    'pricing_model': fields.Raw(description='Pricing model of the dataset'),
+    'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset')),
     'store_statistics': fields.Raw(description='Statistics about the store')
 })
 

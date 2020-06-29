@@ -63,7 +63,7 @@ class Item(db.Model):
 
     item_geojson = db.Column('item_geojson', JSONB)
 
-    pricing_model = db.Column('pricing_model', JSONB)
+    pricing_models = db.Column('pricing_models', JSONB)
     store_statistics = db.Column('store_statistics', JSONB)
 
     ts_vector = func.to_tsvector('english', item_geojson)
