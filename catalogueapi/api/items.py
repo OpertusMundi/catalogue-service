@@ -91,6 +91,8 @@ class ItemCollection(Resource):
         args = search_arguments.parse_args(request)
 
         q = args.get('q')
+        bbox = args.get('bbox')
+        time= args.get('time')
         page = args.get('page')
         per_page = args.get('per_page')
 
@@ -100,6 +102,18 @@ class ItemCollection(Resource):
         # Add filtering (optional)
         if q and q.strip() != "":
             items = Item.query.filter(Item.ts_vector.op('@@')(func.plainto_tsquery(q)))
+
+        # Spatial query
+        if bbox:
+            xmin, ymin, xmax, ymax = bbox.split(',')
+            bbox_polygon = 'POLYGON (({0} {1}, {0} {3}, {2} {3}, {2} {1}, {0} {1} ))'.format(
+                xmin, ymin, xmax, ymax)
+            items = Item.query.filter(Item.geographic_location.ST_Within(bbox_polygon))
+
+        # Time extent
+        if time:
+            time_start, time_end = time.split('/')
+            items = Item.query.filter(Item.date_start >= time_start).filter(Item.date_end <= time_end)
 
         # Add pagination
         result = items.paginate(page, per_page, error_out=False)
