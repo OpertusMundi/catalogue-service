@@ -6,7 +6,7 @@ from geoalchemy2.types import Geometry
 
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.types import ARRAY 
+from sqlalchemy.types import ARRAY
 from shapely.geometry import shape, mapping
 from geoalchemy2.shape import to_shape
 import shapely.wkt
@@ -14,8 +14,10 @@ import datetime
 from sqlalchemy.inspection import inspect
 
 
-class Item(db.Model):
-    __tablename__ = "items"
+class ItemModel(db.Model):
+
+    __abstract__ = True
+
     id = db.Column('id', db.Text, primary_key=True)
     title = db.Column('title', db.Text, nullable=False, index=True)
     abstract = db.Column('abstract', db.Text, index=True)
@@ -66,27 +68,26 @@ class Item(db.Model):
     pricing_models = db.Column('pricing_models', JSONB)
     store_statistics = db.Column('store_statistics', JSONB)
 
-    ts_vector = func.to_tsvector('english', item_geojson)
+    created_at = db.Column('created_at', db.Date, index=True)
+    modified_at = db.Column('modified_at', db.Date, index=True)
+    submitted_at = db.Column('submitted_at', db.Date, index=True)
+    accepted_at = db.Column('accepted_at', db.Date, index=True)
 
-    __table_args__ = (
-        db.Index(
-            'jsonindex',
-            ts_vector,
-            postgresql_using='gin'
-        ),
-    )
+    visibility = db.Column('visibility', ARRAY(db.Text), index=True)
+
+    ts_vector = func.to_tsvector('english', item_geojson)
 
     def update(self, id, data):
         properties = data.get('properties')
         if 'geometry' in data:
             geom = data['geometry']
             self.geographic_location = shape(geom).wkt
-        for key in properties :
+        for key in properties:
             if properties[key]:
                 setattr(self, key, properties[key])
         self.id = id
         item_geojson = self.serialize()
-    
+
         self.item_geojson = item_geojson
         return
 
@@ -118,6 +119,32 @@ class Item(db.Model):
                 "type": "Feature",
                 "geometry": geom,
                 "properties": p
-
             }
         return item_geojson
+
+
+class Item(ItemModel):
+    __tablename__ = "item"
+
+    __table_args__ = (
+        db.Index(
+            'item_index',
+            ItemModel.ts_vector,
+            postgresql_using='gin'
+        ),
+    )
+
+
+class Draft(ItemModel):
+    __tablename__ = "draft"
+
+    status = db.Column(
+        'status', db.Enum('draft', 'review', 'accepted', 'embargo', name="status"), index=True)
+
+    __table_args__ = (
+        db.Index(
+            'draft_index',
+            ItemModel.ts_vector,
+            postgresql_using='gin'
+        ),
+    )
