@@ -5,7 +5,7 @@ from flask import request
 from flask_restx import Resource
 from flask_restx import marshal
 from catalogueapi.database.actions.item import create_item, delete_item, update_item, \
-    create_draft, create_draft_from_item, update_status, update_draft
+    create_draft, create_draft_from_item, update_status, update_draft, delete_draft
 from catalogueapi.api.serializers import item_geojson, page_of_items
 from catalogueapi.api.parsers import pagination_args, pub_search_args, draft_search_args, id_args, update_status_args
 from catalogueapi.api.restx import api
@@ -129,13 +129,16 @@ class ItemUnit(Resource):
         """
         Deletes a item.
         """
-        delete_item(id)
-        return None, 200
+        try:
+            delete_item(id)
+        except:
+            return 'Item not found.', 404
+        return 'Item successfully deleted.', 200
 
 
 @ns.route('/draft/<string:id>')
-@api.response(404, 'Item not found.')
-@api.response(200, 'Item found.')
+@api.response(404, 'Draft not found.')
+@api.response(200, 'Draft found.')
 class ItemUnit(Resource):
     def get(self, id):
         """
@@ -179,15 +182,18 @@ class ItemUnit(Resource):
         """
         data = request.json
         update_draft(id, data)
-        return 'Item successfully updated.', 200
+        return 'Draft successfully updated.', 200
 
-    @api.response(200, 'Item successfully deleted.')
+    @api.response(200, 'Draft successfully deleted.')
     def delete(self, id):
         """
-        Deletes a item.
+        Deletes a draft.
         """
-        delete_draft(id)
-        return None, 200
+        try:
+            delete_draft(id)
+        except:
+            return 'Draft not found.', 404
+        return 'Draft successfully deleted.', 200
 
 
 @ns.route('/published/search')
