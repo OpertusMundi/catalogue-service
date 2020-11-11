@@ -69,7 +69,7 @@ item_geojson = api.model('The item in geojson format',{
 })
 
 page_of_items = api.model('A page of results', {
-    'items': fields.List(fields.Nested(item_geojson)),
+    'items': fields.List(fields.Raw(description='Returned geojson objects')),
     'page': fields.Integer(description='Number of this page of results'),
     'pages': fields.Integer(description='Total number of pages of results'),
     'per_page': fields.Integer(description='Number of items per page of results'),
