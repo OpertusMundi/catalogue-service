@@ -13,6 +13,7 @@ import shapely.wkt
 import datetime
 from sqlalchemy.inspection import inspect
 
+from enum import Enum
 
 class ItemModel(db.Model):
 
