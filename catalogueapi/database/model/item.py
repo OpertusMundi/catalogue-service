@@ -149,3 +149,20 @@ class Draft(ItemModel):
             postgresql_using='gin'
         ),
     )
+
+class History(ItemModel):
+    __tablename__ = "history"
+
+    version_id = db.Column('version_id', db.Integer, primary_key=True, autoincrement=True)
+
+    deleted = db.Column('deleted', db.Boolean, index=True)
+
+    deleted_at = db.Column('deleted_at', db.Date, index=True)
+
+    __table_args__ = (
+        db.Index(
+            'history_index',
+            ItemModel.ts_vector,
+            postgresql_using='gin'
+        ),
+    )

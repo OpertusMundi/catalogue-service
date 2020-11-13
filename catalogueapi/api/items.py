@@ -4,12 +4,11 @@ import json
 from flask import request
 from flask_restx import Resource
 from flask_restx import marshal
-from catalogueapi.database.actions.item import create_item, delete_item, update_item, \
-    create_draft, create_draft_from_item, update_status, update_draft, delete_draft
+import catalogueapi.database.actions.item as actions 
 from catalogueapi.api.serializers import item_geojson, page_of_items
-from catalogueapi.api.parsers import pagination_args, pub_search_args, draft_search_args, id_args, update_status_args
+import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
-from catalogueapi.database.model.item import Item, Draft
+from catalogueapi.database.model.item import Item, Draft, History
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -27,7 +26,7 @@ class ItemCollection(Resource):
         Creates a new item (draft).
         """
         data = request.json
-        id = create_draft(data)
+        id = actions.create_draft(data)
 
         return {
             'success': True,
@@ -45,7 +44,7 @@ class ItemCollection(Resource):
         """
         Creates a new draft from an existing published item.
         """
-        create_draft_from_item(id)
+        actions.create_draft_from_item(id)
 
         return {
             'success': True,
@@ -58,15 +57,15 @@ class ItemCollection(Resource):
 
 @ns.route('/draft/update_status')
 class Status(Resource):
-    @api.expect(update_status_args, validate=False)
+    @api.expect(p.update_status_args, validate=False)
     @api.response(200, 'Status successfully updated.')
     def put(self):
         """
         Updates a draft's status.
         """
-        id = update_status_args.parse_args(request).get('id')
-        status = update_status_args.parse_args(request).get('status')
-        update_status(id, status)
+        id = p.update_status_args.parse_args(request).get('id')
+        status = p.update_status_args.parse_args(request).get('status')
+        actions.update_status(id, status)
         return {
             'success': True,
             'message': {
@@ -121,7 +120,7 @@ class ItemUnit(Resource):
         * Specify the ID of the item to modify in the request URL path.
         """
         data = request.json
-        update_item(id, data)
+        actions.update_item(id, data)
         return 'Item successfully updated.', 200
 
     @api.response(200, 'Item successfully deleted.')
@@ -130,7 +129,7 @@ class ItemUnit(Resource):
         Deletes a item.
         """
         try:
-            delete_item(id)
+            actions.delete_item(id)
         except:
             return 'Item not found.', 404
         return 'Item successfully deleted.', 200
@@ -181,7 +180,7 @@ class ItemUnit(Resource):
         * Specify the ID of the item to modify in the request URL path.
         """
         data = request.json
-        update_draft(id, data)
+        actions.update_draft(id, data)
         return 'Draft successfully updated.', 200
 
     @api.response(200, 'Draft successfully deleted.')
@@ -190,7 +189,7 @@ class ItemUnit(Resource):
         Deletes a draft.
         """
         try:
-            delete_draft(id)
+            actions.delete_draft(id)
         except:
             return 'Draft not found.', 404
         return 'Draft successfully deleted.', 200
@@ -202,12 +201,12 @@ class ItemUnit(Resource):
 class ItemCollection(Resource):
 
     #@api.marshal_list_with(page_of_items)
-    @api.expect(pub_search_args, validate=False)
+    @api.expect(p.pub_search_args, validate=False)
     def get(self):
         """
         Searches and returns a list of items.
         """
-        args = pub_search_args.parse_args(request)
+        args = p.pub_search_args.parse_args(request)
 
         publisher_id = args.get('publisher_id')
         q = args.get('q')
@@ -253,7 +252,7 @@ class ItemCollection(Resource):
                 items_geojson.append(i.item_geojson)
             result.items = items_geojson
             return {
-                'result': result.items,
+                'result':  marshal(result, page_of_items),
                 'success': True,
                 'message': {
                     'code': 200,
@@ -276,12 +275,12 @@ class ItemCollection(Resource):
 class DraftCollection(Resource):
 
     #@api.marshal_list_with(page_of_items)
-    @api.expect(draft_search_args, validate=False)
+    @api.expect(p.draft_search_args, validate=False)
     def get(self):
         """
         Searches and returns a list of drafts.
         """
-        args = draft_search_args.parse_args(request)
+        args = p.draft_search_args.parse_args(request)
 
         publisher_id = args.get('publisher_id')
         status = args.get('status')
@@ -309,7 +308,6 @@ class DraftCollection(Resource):
                 items_geojson.append(i.item_geojson)
             result.items = items_geojson
 
-            log.info('Result %s', result)
             return {
                 'result': marshal(result, page_of_items),
                 'success': True,
@@ -332,12 +330,12 @@ class DraftCollection(Resource):
 @api.response(404, 'No items found with those ids')
 @api.response(200, 'Items found')
 class ItemCollection(Resource):
-    @api.expect(id_args)
+    @api.expect(p.id_args)
     def get(self):
         """
         Returns a list of items by ids.
         """
-        ids = id_args.parse_args(request).get('id')
+        ids = p.id_args.parse_args(request).get('id')
         result = []
         for id in ids:
             try:
@@ -360,5 +358,66 @@ class ItemCollection(Resource):
                 'message': {
                     'code': 404,
                     'description': 'No items found with those ids'
+                }
+            }, 404
+
+
+@ns.route('/history/search')
+@api.response(404, 'No items found for this query')
+@api.response(200, 'Items found')
+class DraftCollection(Resource):
+
+    #@api.marshal_list_with(page_of_items)
+    @api.expect(p.history_search_args, validate=False)
+    def get(self):
+        """
+        Searches and returns a list of drafts.
+        """
+        args = p.history_search_args.parse_args(request)
+
+        item_id = args.get('item_id')
+        publisher_id = args.get('publisher_id')
+        deleted = args.get('deleted')
+        page = args.get('page')
+        per_page = args.get('per_page')
+        # Initialize items query
+        history = History.query
+
+        # Search by item id
+        if item_id:
+            history = history.filter(History.id == item_id)
+
+        # Search by publisher
+        if publisher_id:
+            history = history.filter(History.publisher_id == publisher_id)
+
+        # Search by status
+        history = history.filter(History.deleted == deleted)
+
+        # Add pagination
+        result = history.paginate(page, per_page, error_out=False)
+
+        items_geojson = []
+
+        # Post-process to get item_geojson
+        if result.items:
+            for i in result.items:
+                items_geojson.append(i.item_geojson)
+            result.items = items_geojson
+
+            return {
+                'result': marshal(result, page_of_items),
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Items found'
+                }
+            }, 200
+        else:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'No items found for this query'
                 }
             }, 404

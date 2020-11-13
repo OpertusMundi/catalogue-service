@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 from catalogueapi.database import db
-from catalogueapi.database.model.item import Item, Draft 
+from catalogueapi.database.model.item import Item, Draft, History
 
 log = logging.getLogger(__name__)
 session = db.session
@@ -34,6 +34,13 @@ def update_item(id, data):
 def delete_item(id):
 
     item = session.query(Item).get(id)
+    data = item.item_geojson
+    # keep a record in history table
+    data['properties']['deleted_at'] = datetime.now()
+    data['properties']['deleted'] = True
+    history = History()
+    history.update(id, data)
+    session.add(history)
     session.delete(item)
     session.commit()
     log.info('Deleted item %s', id)
@@ -43,6 +50,8 @@ def create_draft(data):
         id = str(uuid.uuid4())
     draft = Draft()
     data['properties']['status'] = 'draft'
+    if not data['properties'].get('version'):
+        data['properties']['version'] = '1.0'
     data['properties']['created_at'] = datetime.now()
     draft.update(id, data)
     session.add(draft)
@@ -85,6 +94,17 @@ def update_status(id, status):
         data['properties']['publication_date'] = datetime.now()
         item = session.query(Item).get(id)
         if item:
+            # keep a record in history table
+            old_data = item.item_geojson
+            old_data['properties']['deleted'] = False
+            history = History()
+            history.update(id, old_data)
+            session.add(history)
+            # increment version number
+            version = data['properties'].get('version')
+            version = version.split('.')
+            version[-1] = str(int(version[-1]) + 1)
+            data['properties']['version'] =  '.'.join(version)
             item.update(id, data)
         else:
             item = create_item(data)

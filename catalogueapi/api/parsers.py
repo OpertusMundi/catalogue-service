@@ -1,4 +1,5 @@
 from flask_restx import reqparse
+from flask_restplus import inputs
 
 pagination_args = reqparse.RequestParser()
 pagination_args.add_argument('page', type=int, required=False, default=1, help='Page number')
@@ -20,6 +21,15 @@ draft_search_args.add_argument('status', type=str, required=False, default="", h
 draft_search_args.add_argument('page', type=int, required=False, default=1, help='Page number')
 draft_search_args.add_argument('per_page', type=int, required=False,
                                   default=5, help='Results per page }')
+
+history_search_args = reqparse.RequestParser()
+history_search_args.add_argument('item_id', type=str, required=False, default="", help='Item id')
+history_search_args.add_argument('publisher_id', type=str, required=False, default="", help='Publisher id')
+history_search_args.add_argument('deleted', type=inputs.boolean, required=False, default=False, help='Deleted status')
+history_search_args.add_argument('page', type=int, required=False, default=1, help='Page number')
+history_search_args.add_argument('per_page', type=int, required=False,
+                                  default=5, help='Results per page }')
+
 
 id_args = reqparse.RequestParser()
 id_args.add_argument('id', type=str, required=True, action='split', help='Ids of the items')
