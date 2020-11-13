@@ -69,6 +69,8 @@ class ItemModel(db.Model):
     pricing_models = db.Column('pricing_models', JSONB)
     store_statistics = db.Column('store_statistics', JSONB)
 
+    automated_metadata = db.Column('automated_metadata', JSONB)
+
     created_at = db.Column('created_at', db.Date, index=True)
     modified_at = db.Column('modified_at', db.Date, index=True)
     submitted_at = db.Column('submitted_at', db.Date, index=True)
