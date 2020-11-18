@@ -1,5 +1,4 @@
-from flask_restx import reqparse
-from flask_restplus import inputs
+from flask_restx import reqparse, inputs
 
 pagination_args = reqparse.RequestParser()
 pagination_args.add_argument('page', type=int, required=False, default=1, help='Page number')
