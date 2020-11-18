@@ -14,7 +14,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('catalogue', description='Operations related to items')
+ns = api.namespace('', description='Operations related to items')
 
 
 @ns.route('/draft/create')
@@ -37,25 +37,7 @@ class ItemCollection(Resource):
         }, 200
 
 
-@ns.route('/draft/create_from_published/<string:id>')
-class ItemCollection(Resource):
-    @api.response(200, 'Draft successfully created.')
-    def post(self, id):
-        """
-        Creates a new draft from an existing published item.
-        """
-        actions.create_draft_from_item(id)
-
-        return {
-            'success': True,
-            'message': {
-                'code': 200,
-                'description': 'Draft successfully created.'
-            }
-        }, 200
-
-
-@ns.route('/draft/update_status')
+@ns.route('/draft/status')
 class Status(Resource):
     @api.expect(p.update_status_args, validate=False)
     @api.response(200, 'Status successfully updated.')
@@ -136,9 +118,25 @@ class ItemUnit(Resource):
 
 
 @ns.route('/draft/<string:id>')
-@api.response(404, 'Draft not found.')
-@api.response(200, 'Draft found.')
 class ItemUnit(Resource):
+    @api.response(404, 'Published item not found.')
+    @api.response(200, 'Draft successfully created.')
+    def post(self, id):
+        """
+        Creates a new draft from an existing published item.
+        """
+        actions.create_draft_from_item(id)
+
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Draft successfully created.'
+            }
+        }, 200
+        
+    @api.response(404, 'Draft not found.')
+    @api.response(200, 'Draft successfully updated.')
     def get(self, id):
         """
         Returns a draft.
@@ -151,7 +149,7 @@ class ItemUnit(Resource):
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'No drafts found'
+                    'description': 'Draft not found.'
                 }
             }, 404
         return {
@@ -182,7 +180,8 @@ class ItemUnit(Resource):
         data = request.json
         actions.update_draft(id, data)
         return 'Draft successfully updated.', 200
-
+    
+    @api.response(404, 'Draft not found.')
     @api.response(200, 'Draft successfully deleted.')
     def delete(self, id):
         """
