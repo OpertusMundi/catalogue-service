@@ -4,13 +4,14 @@ import json
 from flask import request
 from flask_restx import Resource
 from flask_restx import marshal
-import catalogueapi.database.actions.item as actions 
+import catalogueapi.database.actions.item as actions
 from catalogueapi.api.serializers import item_geojson, page_of_items
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item, Draft, History
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ ns = api.namespace('', description='Operations related to items')
 @ns.route('/draft/create')
 class ItemCollection(Resource):
     @api.response(200, 'Item successfully created.')
-    @api.expect(item_geojson)
+    @ns.expect(item_geojson)
     def post(self):
         """
         Creates a new item (draft).
@@ -47,7 +48,16 @@ class Status(Resource):
         """
         id = p.update_status_args.parse_args(request).get('id')
         status = p.update_status_args.parse_args(request).get('status')
-        actions.update_status(id, status)
+        try:
+            actions.update_status(id, status)
+        except:
+            return{
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': 'Error updating status.'
+                }
+            }, 400
         return {
             'success': True,
             'message': {
@@ -106,6 +116,7 @@ class ItemUnit(Resource):
         return 'Item successfully updated.', 200
 
     @api.response(200, 'Item successfully deleted.')
+    @api.response(404, 'Item not found.')
     def delete(self, id):
         """
         Deletes a item.
@@ -113,8 +124,20 @@ class ItemUnit(Resource):
         try:
             actions.delete_item(id)
         except:
-            return 'Item not found.', 404
-        return 'Item successfully deleted.', 200
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Item not found'
+                }
+            }, 404
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Item successfully deleted.'
+            }
+        }, 404
 
 
 @ns.route('/draft/<string:id>')
@@ -125,8 +148,25 @@ class ItemUnit(Resource):
         """
         Creates a new draft from an existing published item.
         """
-        actions.create_draft_from_item(id)
-
+        try:
+            item = Item.query.filter(Item.id == id).one()
+            actions.create_draft_from_item(item)
+        except NoResultFound:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Published item not found.'
+                }
+            }, 404
+        except IntegrityError:
+            return {
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': 'Draft for this published item already exists.'
+                }
+            }, 400
         return {
             'success': True,
             'message': {
@@ -134,9 +174,9 @@ class ItemUnit(Resource):
                 'description': 'Draft successfully created.'
             }
         }, 200
-        
+
     @api.response(404, 'Draft not found.')
-    @api.response(200, 'Draft successfully updated.')
+    @api.response(200, 'Draft found.')
     def get(self, id):
         """
         Returns a draft.
@@ -178,9 +218,33 @@ class ItemUnit(Resource):
         * Specify the ID of the item to modify in the request URL path.
         """
         data = request.json
-        actions.update_draft(id, data)
-        return 'Draft successfully updated.', 200
-    
+        try:
+            draft = Draft.query.filter(Draft.id == id).one()
+            actions.update_draft(draft, data)
+        except NoResultFound:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Draft not found.'
+                }
+            }, 404
+        except Exception as e:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Error updating draft.'
+                }
+            }, 400
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Draft successfully updated.'
+            }
+        }, 200
+
     @api.response(404, 'Draft not found.')
     @api.response(200, 'Draft successfully deleted.')
     def delete(self, id):
@@ -190,8 +254,20 @@ class ItemUnit(Resource):
         try:
             actions.delete_draft(id)
         except:
-            return 'Draft not found.', 404
-        return 'Draft successfully deleted.', 200
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Draft not found'
+                }
+            }, 404
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Draft successfully deleted.'
+            }
+        }, 404
 
 
 @ns.route('/published/search')
@@ -199,7 +275,7 @@ class ItemUnit(Resource):
 @api.response(200, 'Items found')
 class ItemCollection(Resource):
 
-    #@api.marshal_list_with(page_of_items)
+    # @api.marshal_list_with(page_of_items)
     @api.expect(p.pub_search_args, validate=False)
     def get(self):
         """
@@ -273,7 +349,7 @@ class ItemCollection(Resource):
 @api.response(200, 'Drafts found')
 class DraftCollection(Resource):
 
-    #@api.marshal_list_with(page_of_items)
+    # @api.marshal_list_with(page_of_items)
     @api.expect(p.draft_search_args, validate=False)
     def get(self):
         """
@@ -366,7 +442,7 @@ class ItemCollection(Resource):
 @api.response(200, 'Items found')
 class DraftCollection(Resource):
 
-    #@api.marshal_list_with(page_of_items)
+    # @api.marshal_list_with(page_of_items)
     @api.expect(p.history_search_args, validate=False)
     def get(self):
         """

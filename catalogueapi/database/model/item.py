@@ -15,11 +15,12 @@ from sqlalchemy.inspection import inspect
 
 from enum import Enum
 
+
 class ItemModel(db.Model):
 
     __abstract__ = True
 
-    id = db.Column('id', db.Text, primary_key=True)
+    id = db.Column('id', db.Text, nullable=False, primary_key=True)
     title = db.Column('title', db.Text, nullable=False, index=True)
     abstract = db.Column('abstract', db.Text, index=True)
     type = db.Column('type', db.Text, index=True)
@@ -82,7 +83,7 @@ class ItemModel(db.Model):
 
     def update(self, id, data):
         properties = data.get('properties')
-        if 'geometry' in data:
+        if data.get('geometry') is not None:
             geom = data['geometry']
             self.geographic_location = shape(geom).wkt
         for key in properties:
@@ -90,7 +91,6 @@ class ItemModel(db.Model):
                 setattr(self, key, properties[key])
         self.id = id
         item_geojson = self.serialize()
-
         self.item_geojson = item_geojson
         return
 
@@ -98,9 +98,10 @@ class ItemModel(db.Model):
     def serialize(self):
         # build properties object
         p = {}
+        geom = None
         for c in inspect(self).attrs.keys():
             attr = getattr(self, c)
-            if c == 'geographic_location':
+            if c == 'geographic_location' and attr is not None:
                 # Convert to a shapely Polygon object to get mapping
                 if isinstance(attr, str):
                     g = shapely.wkt.loads(attr)
@@ -152,10 +153,12 @@ class Draft(ItemModel):
         ),
     )
 
+
 class History(ItemModel):
     __tablename__ = "history"
 
-    version_id = db.Column('version_id', db.Integer, primary_key=True, autoincrement=True)
+    version_id = db.Column('version_id', db.Integer,
+                           primary_key=True, autoincrement=True)
 
     deleted = db.Column('deleted', db.Boolean, index=True)
 

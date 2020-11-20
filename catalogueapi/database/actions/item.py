@@ -59,22 +59,20 @@ def create_draft(data):
     log.info('Created draft %s', id)
     return id
 
-def create_draft_from_item(id):
-    item = session.query(Item).get(id)
+def create_draft_from_item(item):
     data = item.item_geojson
+    data['properties']['status'] = 'draft'
     draft = Draft()
-    draft.update(id, data)
-    draft.status = 'draft'
+    draft.update(item.id, data)
     session.add(draft)
     session.commit()
     log.info('Created draft from item %s', id)
     return id
 
-def update_draft(id, data):
+def update_draft(draft, data):
     
-    draft = session.query(Draft).get(id)
-    data['properties']['modified_at'] = datetime.now()
-    draft.update(id, data)
+    data['properties']['metadata_date'] = datetime.now()
+    draft.update(draft.id, data)
     session.add(draft)
     session.commit()
     
