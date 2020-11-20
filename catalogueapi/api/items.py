@@ -370,7 +370,7 @@ class DraftCollection(Resource):
 
         # Search by status
         if status:
-            drafts = drafts.filter(Draft.status == status)
+            drafts = drafts.filter(Draft.status.in_(status))
 
         # Add pagination
         result = drafts.paginate(page, per_page, error_out=False)

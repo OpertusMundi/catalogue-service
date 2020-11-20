@@ -1,4 +1,4 @@
-from flask_restx import fields
+from flask_restx import fields, inputs
 from catalogueapi.api.restx import api
 
 polygon = api.model('Polygon geometry', {
@@ -16,7 +16,7 @@ polygon = api.model('Polygon geometry', {
 })
 
 properties = api.model('Properties of an item', {
-    'title': fields.String(description='A name given to the resource'),
+    'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
     'type': fields.String(description='The nature or genre of the resource'),
     'spatial_data_service_type': fields.String(description='The nature or genre of the service'),
@@ -65,7 +65,7 @@ item_geojson = api.model('The item in geojson format',{
     'type': fields.String(description='The type of the geojson', default='Feature'),
     'geometry': fields.Nested(polygon, description='The spatial extent of the resource, the spatial \
                     applicability of the resource, or the jurisdiction under which the resource is relevant.'),
-    'properties':fields.Nested(properties, description='The properties of the geojson.')
+    'properties':fields.Nested(properties, description='The properties of the geojson.',required=True)
 })
 
 page_of_items = api.model('A page of results', {
