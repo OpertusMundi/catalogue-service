@@ -48,6 +48,8 @@ def delete_item(id):
 def create_draft(data):
     if not 'id' in data or not is_valid_uuid(data['id']):
         id = str(uuid.uuid4())
+    else:
+        id = data['id']
     draft = Draft()
     data['properties']['status'] = 'draft'
     if not data['properties'].get('version'):
