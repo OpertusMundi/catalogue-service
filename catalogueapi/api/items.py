@@ -1,3 +1,4 @@
+import requests
 import logging
 import json
 
@@ -496,3 +497,53 @@ class DraftCollection(Resource):
                     'description': 'No items found for this query'
                 }
             }, 404
+
+
+@ns.route('/harvest')
+@api.response(400, 'Error harvesting')
+@api.response(200, 'Harvested successfuly from remote catalogue.')
+class Harvest(Resource):
+    @api.expect(p.url_arg)
+    def post(self):
+        """
+        Harvests records from a remote catalogue.
+        """
+        url = p.url_arg.parse_args(request).get('url')
+        log.info('Harvesting from: ' + url)
+        try:
+            result = requests.get(url).json()
+            harvested = result.get('result').get('items')
+            items = Item.query
+            harvested_ids = []
+            for harvest in harvested:
+                log.info('harvest: %s', harvest)
+                id = harvest.get('id')
+                harvest['properties']['harvested_from'] = url
+                harvest['properties']['harvest_json'] = json.dumps(harvest)
+                item = items.filter(Item.id == id).first()
+                if not item:
+                    log.info('Harvesting item %s', id)
+                    actions.create_item(harvest)
+                elif item.version!= harvest['properties']['version']:
+                    actions.update_item(item, harvest)
+                harvested_ids.append(id)
+
+            # update any existing harvested data deleted in remote
+            items = items.filter(Item.harvested_from == url)
+            for item in (item for item in items if item.id not in harvested_ids): 
+                actions.delete_item(item.id)
+        except Exception as ex:
+            return {
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': 'Error harvesting'
+                }
+            }, 404
+        return {
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Harvested successfuly from remote catalogue: ' + url
+                }
+            }, 200

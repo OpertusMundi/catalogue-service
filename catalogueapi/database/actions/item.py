@@ -10,6 +10,7 @@ from catalogueapi.database.model.item import Item, Draft, History
 log = logging.getLogger(__name__)
 session = db.session
 
+
 def create_item(data):
     if not 'id' in data or not is_valid_uuid(data['id']):
         id = str(uuid.uuid4())
@@ -22,17 +23,18 @@ def create_item(data):
     log.info('Created item %s', id)
     return item
 
-def update_item(id, data):
-    
-    item = session.query(Item).get(id)
-    item.update(id, data)
+
+def update_item(item, data):
+
+    data['properties']['metadata_date'] = datetime.now()
+    item.update(item.id, data)
     session.add(item)
     session.commit()
-    
-    log.info('Updated item %s', id)
+
+    log.info('Updated item %s', item.id)
+
 
 def delete_item(id):
-
     item = session.query(Item).get(id)
     data = item.item_geojson
     # keep a record in history table
@@ -43,7 +45,9 @@ def delete_item(id):
     session.add(history)
     session.delete(item)
     session.commit()
+    
     log.info('Deleted item %s', id)
+
 
 def create_draft(data):
     if not 'id' in data or not is_valid_uuid(data['id']):
@@ -61,6 +65,7 @@ def create_draft(data):
     log.info('Created draft %s', id)
     return id
 
+
 def create_draft_from_item(item):
     data = item.item_geojson
     data['properties']['status'] = 'draft'
@@ -71,14 +76,16 @@ def create_draft_from_item(item):
     log.info('Created draft from item %s', id)
     return id
 
+
 def update_draft(draft, data):
-    
+
     data['properties']['metadata_date'] = datetime.now()
     draft.update(draft.id, data)
     session.add(draft)
     session.commit()
-    
+
     log.info('Updated draft %s', id)
+
 
 def delete_draft(id):
 
@@ -86,6 +93,7 @@ def delete_draft(id):
     session.delete(draft)
     session.commit()
     log.info('Deleted draft %s', id)
+
 
 def update_status(id, status):
     draft = session.query(Draft).get(id)
@@ -104,7 +112,7 @@ def update_status(id, status):
             version = data['properties'].get('version')
             version = version.split('.')
             version[-1] = str(int(version[-1]) + 1)
-            data['properties']['version'] =  '.'.join(version)
+            data['properties']['version'] = '.'.join(version)
             item.update(id, data)
         else:
             item = create_item(data)
@@ -120,6 +128,7 @@ def update_status(id, status):
         session.add(draft)
     session.commit()
     log.info('Updated item %s with status %s', id, status)
+
 
 def is_valid_uuid(uuid_to_test, version=4):
     try:

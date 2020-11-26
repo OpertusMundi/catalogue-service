@@ -72,8 +72,10 @@ class ItemModel(db.Model):
 
     automated_metadata = db.Column('automated_metadata', JSONB)
 
+    harvested_from = db.Column('harvested_from', db.Text, index=True)
+    harvest_json = db.Column('harvest_json', JSONB)
+
     created_at = db.Column('created_at', db.Date, index=True)
-    modified_at = db.Column('modified_at', db.Date, index=True)
     submitted_at = db.Column('submitted_at', db.Date, index=True)
     accepted_at = db.Column('accepted_at', db.Date, index=True)
 
