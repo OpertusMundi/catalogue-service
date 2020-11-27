@@ -28,6 +28,18 @@ class ItemCollection(Resource):
         Creates a new item (draft).
         """
         data = request.json
+        # validate input first
+        try: 
+            actions.validate_input(data)
+        except Exception as ex:
+            return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': str(ex)
+            }
+        }, 400
+
         id = actions.create_draft(data)
 
         return {
@@ -138,7 +150,7 @@ class ItemUnit(Resource):
                 'code': 200,
                 'description': 'Item successfully deleted.'
             }
-        }, 404
+        }, 200
 
 
 @ns.route('/draft/<string:id>')
@@ -268,7 +280,7 @@ class ItemUnit(Resource):
                 'code': 200,
                 'description': 'Draft successfully deleted.'
             }
-        }, 404
+        }, 200
 
 
 @ns.route('/published/search')
@@ -547,3 +559,31 @@ class Harvest(Resource):
                     'description': 'Harvested successfuly from remote catalogue: ' + url
                 }
             }, 200
+
+@ns.route('/validate_schema')
+@api.response(400, 'Invalid schema')
+@api.response(200, 'Schema passed validation.')
+class Validate(Resource):
+    @ns.expect(item_geojson)
+    def post(self):
+        """
+        Validates a json.
+        """
+        data = request.json
+        try: 
+            actions.validate_input(data)
+        except Exception as ex:
+            return {
+            'success': True,
+            'message': {
+                'code': 400,
+                'description': str(ex)
+            }
+        }, 400
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Schema passed validation.'
+            }
+        }, 200
