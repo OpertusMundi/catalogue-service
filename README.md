@@ -1,33 +1,29 @@
-# catalogue-api
+# catalogue-service
 
-A simple catalogue API with functions `create`, `update`, `delete` and `get all`.
+A catalogue service with CRUD operations.
 
 ## Installation
 
 ```
 pip install -r requirements.txt
-python setup.py develop
+python setup.py install
 ```
 
 run with: `python app.py`
 
 ## Configuration
 
-Use the `config.ini` file:
+Use the `config.py` file:
 
 ```
-[DEFAULT]
-;Flask settings
-FLASK_SERVER_NAME = localhost:port
-FLASK_DEBUG = true 	(set to false on production environments)
+SERVER_NAME = 'localhost:port'
+FLASK_DEBUG = True 	(set to False on production environments)
 
-;Flask-RESTX settings
-RESTX_SWAGGER_UI_DOC_EXPANSION = list
-RESTX_VALIDATE = true
-RESTX_MASK_SWAGGER = false
-RESTX_ERROR_404_HELP = false
+SWAGGER_UI_DOC_EXPANSION = list
+RESTX_VALIDATE = True
+RESTX_MASK_SWAGGER = False
+ERROR_404_HELP = False
 
-;SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = postgresql://username:password@host:port/database
-SQLALCHEMY_TRACK_MODIFICATIONS = false
+SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@host:port/database'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 ```
