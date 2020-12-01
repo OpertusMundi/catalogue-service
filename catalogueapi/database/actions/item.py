@@ -58,6 +58,7 @@ def create_draft(data):
     data['properties']['status'] = 'draft'
     if not data['properties'].get('version'):
         data['properties']['version'] = '1.0'
+    data['properties']['metadata_version'] = '1.0'
     data['properties']['created_at'] = datetime.now()
     draft.update(id, data)
     session.add(draft)
@@ -108,11 +109,11 @@ def update_status(id, status):
             history = History()
             history.update(id, old_data)
             session.add(history)
-            # increment version number
-            version = data['properties'].get('version')
-            version = version.split('.')
-            version[-1] = str(int(version[-1]) + 1)
-            data['properties']['version'] = '.'.join(version)
+            # increment metadata version number
+            metadata_version = data['properties'].get('version')
+            metadata_version = metadata_version.split('.')
+            metadata_version[-1] = str(int(metadata_version[-1]) + 1)
+            data['properties']['metadata_version'] = '.'.join(metadata_version)
             item.update(id, data)
         else:
             item = create_item(data)

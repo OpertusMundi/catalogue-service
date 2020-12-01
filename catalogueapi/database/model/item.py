@@ -43,11 +43,11 @@ class ItemModel(db.Model):
 
     resource_locator = db.Column('resource_locator', db.Text, index=True)
     license = db.Column('license', db.Text, index=True)
-    topic_category = db.Column('topic_category', db.Text, index=True)
+    topic_category = db.Column('topic_category', ARRAY(db.Text), index=True)
 
     reference_system = db.Column('reference_system', db.Text, index=True)
     spatial_resolution = db.Column('spatial_resolution', db.Text, index=True)
-    scale = db.Column('scale', db.Text, index=True)
+    scale = db.Column('scale', db.Integer, index=True)
     version = db.Column('version', db.Text, index=True)
     conformity = db.Column('conformity', db.Text, index=True)
     additional_resources = db.Column(
@@ -61,6 +61,7 @@ class ItemModel(db.Model):
     metadata_point_of_contact_email = db.Column(
         'metadata_point_of_contact_email', db.Text, index=True)
     metadata_date = db.Column('metadata_date', db.Date, index=True)
+    metadata_version = db.Column('metadata_version', db.Text, index=True)
     coupled_resource = db.Column('coupled_resource', db.Text, index=True)
     lineage = db.Column('lineage', db.Text, index=True)
     parent_id = db.Column('parent_id', db.Text, index=True)
