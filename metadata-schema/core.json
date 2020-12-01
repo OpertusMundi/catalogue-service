@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/OpertusMundi/catalogue-api/tree/master/metadata-schema/core.json##",
+  "$id": "https://raw.githubusercontent.com/OpertusMundi/catalogue-service/master/metadata-schema/core.json",
   "title": "Opertus Mundi Core Metadata Elements",
   "type": "object",
   "properties": {
