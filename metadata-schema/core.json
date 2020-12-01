@@ -87,7 +87,7 @@
       "title": "Resource Locator",
       "description": "The Resource Locator is the navigation section of a metadata record which point users to the location (URL) where the data can be downloaded, or to where additional information about the resource may be provided",
       "type": "string",
-      "format": "url"
+      "format": "uri"
     },
     "license": {
       "title": "Resource License",
@@ -132,7 +132,7 @@
       "title": "Additional Resources",
       "description": "Auxiliary files or additional resources to the dataset",
       "type": "string",
-      "format": "url"
+      "format": "uri"
     },
     "public_access_limitations": {
       "title": "Resource Public Access Limitations",
@@ -170,7 +170,7 @@
       "title": "Service Coupled Resource",
       "description": "Provides information about the datasets that the service operates on",
       "type": "string",
-      "type": "url"
+      "type": "uri"
     },
     "lineage": {
       "title": "Resource Lineage",
