@@ -29,16 +29,16 @@ class ItemCollection(Resource):
         """
         data = request.json
         # validate input first
-        try: 
+        try:
             actions.validate_input(data)
         except Exception as ex:
             return {
-            'success': True,
-            'message': {
-                'code': 200,
-                'description': str(ex)
-            }
-        }, 400
+                'success': True,
+                'message': {
+                    'code': 400,
+                    'description': str(ex)
+                }
+            }, 400
 
         id = actions.create_draft(data)
 
@@ -536,13 +536,13 @@ class Harvest(Resource):
                 if not item:
                     log.info('Harvesting item %s', id)
                     actions.create_item(harvest)
-                elif item.version!= harvest['properties']['version']:
+                elif item.metadata_version != harvest['properties']['metadata_version']:
                     actions.update_item(item, harvest)
                 harvested_ids.append(id)
 
             # update any existing harvested data deleted in remote
             items = items.filter(Item.harvested_from == url)
-            for item in (item for item in items if item.id not in harvested_ids): 
+            for item in (item for item in items if item.id not in harvested_ids):
                 actions.delete_item(item.id)
         except Exception as ex:
             return {
@@ -551,14 +551,15 @@ class Harvest(Resource):
                     'code': 400,
                     'description': 'Error harvesting'
                 }
-            }, 404
+            }, 400
         return {
-                'success': True,
-                'message': {
-                    'code': 200,
-                    'description': 'Harvested successfuly from remote catalogue: ' + url
-                }
-            }, 200
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Harvested successfuly from remote catalogue: ' + url
+            }
+        }, 200
+
 
 @ns.route('/validate_schema')
 @api.response(400, 'Invalid schema')
@@ -570,16 +571,17 @@ class Validate(Resource):
         Validates a json.
         """
         data = request.json
-        try: 
+        try:
             actions.validate_input(data)
         except Exception as ex:
             return {
-            'success': True,
-            'message': {
-                'code': 400,
-                'description': str(ex)
-            }
-        }, 400
+                'success': True,
+                'message': {
+                    'code': 400,
+                    'description': str(ex)
+                }
+            }, 400
+
         return {
             'success': True,
             'message': {

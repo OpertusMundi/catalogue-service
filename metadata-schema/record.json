@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/OpertusMundi/catalogue-service/master/metadata-schema/record.json",
   "title": "OpertusMundi Metadata Record",
   "type": "object",
   "description": "This object represents the metadata for an geospatial asset in OpertusMundi Catalog.",
@@ -23,9 +22,9 @@
           "properties": {
             "geometry": {
               "$ref": "https://geojson.org/schema/Geometry.json"
-            },
+            }
 
-          },
+          }
         },
         {
           "type": "object",
@@ -49,10 +48,10 @@
     "metadata":{
       "allOf": [
         {
-          "$ref": "core.json"
+          "$ref": "file:../metadata-schema/core.json"
         },
         {
-          "$ref": "extended.json"
+          "$ref": "file:../metadata-schema/extended.json"
         }
       ]
     }
