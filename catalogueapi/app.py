@@ -13,9 +13,17 @@ log = logging.getLogger(__name__)
 
 
 def configure_app(flask_app):
+    # initialize config option from file
     flask_app.config.from_pyfile('config.py')
-    if 'CONFIG_ENV' in os.environ:
-        flask_app.config.from_envvar('CONFIG_ENV')
+    # replace with environmental values if existing
+    flask_app.config['SERVER_NAME'] = os.environ.get("SERVER_NAME", flask_app.config['SERVER_NAME']) 
+    flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI", flask_app.config['SQLALCHEMY_DATABASE_URI'])
+    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS']) 
+    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = os.environ.get("SWAGGER_UI_DOC_EXPANSION", flask_app.config['SWAGGER_UI_DOC_EXPANSION']) 
+    flask_app.config['RESTX_VALIDATE'] = os.environ.get("RESTX_VALIDATE", flask_app.config['RESTX_VALIDATE']) 
+    flask_app.config['RESTX_MASK_SWAGGER'] = os.environ.get("RESTX_MASK_SWAGGER", flask_app.config['RESTX_MASK_SWAGGER']) 
+    flask_app.config['ERROR_404_HELP'] = os.environ.get("ERROR_404_HELP", flask_app.config['ERROR_404_HELP']) 
+    
 
 def initialize_app(flask_app):
     configure_app(flask_app)
@@ -28,6 +36,7 @@ def initialize_app(flask_app):
     db.init_app(flask_app)
     with flask_app.app_context():
         db.create_all()
+
 
 def main():
     initialize_app(app)
