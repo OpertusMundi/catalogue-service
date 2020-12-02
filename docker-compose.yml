@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+
+  db:
+    container_name: db
+    image: postgis/postgis:12-3.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypass
+      POSTGRES_DB: catalogue
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - db-data:/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+
+  api:
+    build: .
+    environment:
+        SERVER_NAME: localhost:5000
+        SQLALCHEMY_DATABASE_URI: postgresql://postgres:mypass@db:5432/catalogue'
+    ports:
+      - 5000:5000
+
+volumes:
+  db-data:
