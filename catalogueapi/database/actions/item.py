@@ -11,12 +11,16 @@ from catalogueapi.database.model.item import Item, Draft, History
 log = logging.getLogger(__name__)
 session = db.session
 
+
 def create_item(data):
     if not 'id' in data or not is_valid_uuid(data['id']):
         id = str(uuid.uuid4())
     else:
         id = data['id']
     item = Item()
+    if not data['properties'].get('metadata_version'):
+        data['properties']['metadata_version'] = '1.0'
+    data['properties']['created_at'] = datetime.now()
     item.update(id, data)
     session.add(item)
     session.commit()
@@ -45,7 +49,7 @@ def delete_item(id):
     session.add(history)
     session.delete(item)
     session.commit()
-    
+
     log.info('Deleted item %s', id)
 
 
@@ -136,11 +140,12 @@ def is_valid_uuid(uuid_to_test, version=4):
         s = uuid.UUID(uuid_to_test, version=version)
     except ValueError:
         return False
-
-    return 
+    return True
 
 
 def validate_input(data):
 
     schema = pkgutil.get_data('catalogueapi', "resources/record.json")
     validate(instance=data, schema=json.loads(schema))
+
+

@@ -6,6 +6,7 @@ from flask import request
 from flask_restx import Resource
 from flask_restx import marshal
 import catalogueapi.database.actions.item as actions
+from catalogueapi.database.actions.harvest import harvest
 from catalogueapi.api.serializers import item_geojson, page_of_items
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
@@ -515,41 +516,22 @@ class DraftCollection(Resource):
 @api.response(400, 'Error harvesting')
 @api.response(200, 'Harvested successfuly from remote catalogue.')
 class Harvest(Resource):
-    @api.expect(p.url_arg)
+    @api.expect(p.harvest_args)
     def post(self):
         """
         Harvests records from a remote catalogue.
         """
-        url = p.url_arg.parse_args(request).get('url')
+        url = p.harvest_args.parse_args(request).get('url')
+        harvester = p.harvest_args.parse_args(request).get('harvester')
         log.info('Harvesting from: ' + url)
         try:
-            result = requests.get(url).json()
-            harvested = result.get('result').get('items')
-            items = Item.query
-            harvested_ids = []
-            for harvest in harvested:
-                log.info('harvest: %s', harvest)
-                id = harvest.get('id')
-                harvest['properties']['harvested_from'] = url
-                harvest['properties']['harvest_json'] = json.dumps(harvest)
-                item = items.filter(Item.id == id).first()
-                if not item:
-                    log.info('Harvesting item %s', id)
-                    actions.create_item(harvest)
-                elif item.metadata_version != harvest['properties']['metadata_version']:
-                    actions.update_item(item, harvest)
-                harvested_ids.append(id)
-
-            # update any existing harvested data deleted in remote
-            items = items.filter(Item.harvested_from == url)
-            for item in (item for item in items if item.id not in harvested_ids):
-                actions.delete_item(item.id)
+            harvest(url, harvester)
         except Exception as ex:
             return {
                 'success': False,
                 'message': {
                     'code': 400,
-                    'description': 'Error harvesting'
+                    'description': 'Error harvesting' + str(ex)
                 }
             }, 400
         return {

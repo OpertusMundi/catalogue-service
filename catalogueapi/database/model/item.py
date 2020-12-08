@@ -74,6 +74,7 @@ class ItemModel(db.Model):
     automated_metadata = db.Column('automated_metadata', JSONB)
 
     harvested_from = db.Column('harvested_from', db.Text, index=True)
+    harvest_extras = db.Column('harvest_extras',  ARRAY(db.Text), index=True)
     harvest_json = db.Column('harvest_json', JSONB)
 
     created_at = db.Column('created_at', db.Date, index=True)
