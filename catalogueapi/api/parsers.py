@@ -38,5 +38,5 @@ update_status_args.add_argument('id', type=str, required=True, default="", help=
 update_status_args.add_argument('status', type=str, required=True, default="", help='Status to be updated (review - accepted - published)')
 
 harvest_args = reqparse.RequestParser()
-harvest_args.add_argument('url', type=inputs.URL(schemes=['http', 'https'], local=True, port=True), required=True, help='Harvest url')
+harvest_args.add_argument('url', type=inputs.URL(schemes=['http', 'https'], local=True, port=True, ip=True), required=True, help='Harvest url')
 harvest_args.add_argument('harvester', type=str, required=True, default="op-catalogue", help='Target catalogue type (op-catalogue/ckan)')

@@ -51,7 +51,7 @@ class ItemModel(db.Model):
     version = db.Column('version', db.Text, index=True)
     conformity = db.Column('conformity', db.Text, index=True)
     additional_resources = db.Column(
-        'additional_resources', db.Text, index=True)
+        'additional_resources', ARRAY(db.Text), index=True)
     public_access_limitations = db.Column(
         'public_access_limitations', db.Text, index=True)
 
@@ -74,7 +74,6 @@ class ItemModel(db.Model):
     automated_metadata = db.Column('automated_metadata', JSONB)
 
     harvested_from = db.Column('harvested_from', db.Text, index=True)
-    harvest_extras = db.Column('harvest_extras',  ARRAY(db.Text), index=True)
     harvest_json = db.Column('harvest_json', JSONB)
 
     created_at = db.Column('created_at', db.Date, index=True)
