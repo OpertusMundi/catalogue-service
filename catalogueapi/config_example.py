@@ -1,0 +1,10 @@
+SERVER_NAME = 'localhost:5000'
+FLASK_DEBUG = True
+
+SWAGGER_UI_DOC_EXPANSION = list
+RESTX_VALIDATE = True
+RESTX_MASK_SWAGGER = False
+ERROR_404_HELP = False
+
+SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@host:port/database'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
