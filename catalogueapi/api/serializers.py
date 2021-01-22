@@ -40,7 +40,7 @@ properties = api.model('Properties of an item', {
     'topic_category': fields.List(fields.String(description='A high-level classification scheme to assist in the grouping and topic-based \
                     search of available spatial data resources')),
     'reference_system': fields.String(description='Information about the reference system'),
-    'spatial_resolution': fields.String(description='Spatial resolution refers to the level of detail of the data set'),
+    'spatial_resolution': fields.Integer(description='Spatial resolution refers to the level of detail of the data set'),
     'scale': fields.Integer(description='Denominator of the scale of the data set'),
     'version': fields.String(description='Version of the resource'),
     'conformity': fields.String(description='Degree of conformity with the implementing rules/standard of the metadata followed'),

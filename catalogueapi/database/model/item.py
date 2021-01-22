@@ -46,7 +46,7 @@ class ItemModel(db.Model):
     topic_category = db.Column('topic_category', ARRAY(db.Text), index=True)
 
     reference_system = db.Column('reference_system', db.Text, index=True)
-    spatial_resolution = db.Column('spatial_resolution', db.Text, index=True)
+    spatial_resolution = db.Column('spatial_resolution', db.Integer, index=True)
     scale = db.Column('scale', db.Integer, index=True)
     version = db.Column('version', db.Text, index=True)
     conformity = db.Column('conformity', db.Text, index=True)
