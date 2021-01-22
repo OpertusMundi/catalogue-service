@@ -22,7 +22,8 @@ ns = api.namespace('', description='Operations related to items')
 
 @ns.route('/draft/create')
 class ItemCollection(Resource):
-    @api.response(200, 'Item successfully created.')
+    @api.response(200, 'Draft successfully created.')
+    @api.response(400, 'Error creating draft.')
     @ns.expect(item_geojson)
     def post(self):
         """
@@ -47,7 +48,7 @@ class ItemCollection(Resource):
             'success': True,
             'message': {
                 'code': 200,
-                'description': 'Item successfully created.'
+                'description': 'Draft successfully created.'
             }
         }, 200
 
@@ -415,7 +416,7 @@ class DraftCollection(Resource):
             }, 404
 
 
-@ns.route('/get')
+@ns.route('/published/get')
 @api.response(404, 'No items found with those ids')
 @api.response(200, 'Items found')
 class ItemCollection(Resource):

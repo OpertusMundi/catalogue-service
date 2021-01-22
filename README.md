@@ -9,11 +9,16 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
-run with: `python app.py`
+run with: 
+
+```
+cd catalogueapi
+python app.py
+```
 
 ## Configuration
 
-Use the `config.py` file:
+Use the `config.py` file, like the config_example.py:
 
 ```
 SERVER_NAME = 'localhost:port'
