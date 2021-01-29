@@ -8,32 +8,28 @@
       "description": "A system identifier for publisher of this dataset.",
       "type": "string"
     },
+    "suitable_for": {
+      "title": "Suiteble For",
+      "description": "A description of geospatial analysis or processing that the dataset is suitable for",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "pricing_models": {
       "title": "Pricing Models",
       "description": "Detailed multi-line description to fully explain the Item.",
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "totalPriceExcludingTax": {
-            "type": "number"
-          },
-          "includesUpdates": {
-            "type": "boolean"
-          },
-          "yearsOfUpdates": {
-            "type": "number"
-          },
-          "duration": {
-            "type": "number"
-          },
-          "monthlyPrice": {
-            "type": "number"
-          }
-        }
+        "type": "object"
+      }
+    },
+    "statistics": {
+      "title": "Statistics",
+      "description": "Detailed multi-line description to fully explain the Item.",
+      "type": "array",
+      "items": {
+        "type": "object"
       }
     }
   }

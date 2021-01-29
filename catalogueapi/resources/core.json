@@ -16,12 +16,14 @@
     "type": {
       "title": "Resource Type",
       "description": "The nature or genre of the resource",
-      "type": "string"
+      "type": "string",
+      "enum": ["raster", "vector", "service"]
     },
     "spatial_data_service_type": {
       "title": "Service Type",
       "description": "The nature or genre of the service",
-      "type": "string"
+      "type": "string",
+      "enum": ["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]
     },
     "format": {
       "title": "Resource Format",
@@ -33,7 +35,15 @@
       "description": "The topic of the resource",
       "type": "array",
       "items":{
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          }
+        }
       }
     },
     "publisher_name": {
@@ -98,7 +108,8 @@
       "description": "The topic category is a high-level classification scheme to assist in the grouping and topic-based search of available spatial data resources",
       "type": "array",
       "items":{
-        "type": "string"
+        "type": "string",
+        "enum": ["Biota", "Boundaries", "Climatology / Meteorology / Atmosphere", "Economy", "Elevation", "Environment", "Farming", "Geoscientific Information", "Health", "Imagery / Base Maps / Earth Cover", "Inland Waters", "Intelligence / Military", "Location", "Oceans", "Planning / Cadastre", "Society", "Structure", "Transportation", "Utilities / Communication"]
       }
     },
     "reference_system": {
@@ -111,10 +122,21 @@
       "description": "Spatial resolution refers to the level of detail of the data set",
       "type": "number"
     },
-    "scale": {
-      "title": "Resource Scale",
+    "scales": {
+      "title": "Resource Scales",
       "description": "Scale refers to the level of detail of the data set",
-      "type": "integer"
+      "type": "array",
+      "items":{
+        "type": "object",
+        "properties": {
+          "scale": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
     },
     "version": {
       "title": "Resource Version",
@@ -130,8 +152,24 @@
     "additional_resources": {
       "title": "Additional Resources",
       "description": "Auxiliary files or additional resources to the dataset",
-      "type": "string",
-      "format": "uri"
+      "type": "array",
+      "items":{
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
     },
     "public_access_limitations": {
       "title": "Resource Public Access Limitations",
@@ -165,11 +203,27 @@
       "type": "string",
       "format": "date-time"
     },
-    "coupled_resource": {
-      "title": "Service Coupled Resource",
-      "description": "Provides information about the datasets that the service operates on",
-      "type": "string",
-      "format": "uri"
+    "resources": {
+      "title": "Dataset Resources",
+      "description": "Provides a list of resources of the dataset",
+      "type": "array",
+      "items":{
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string"
+          }
+        }
+      }
     },
     "lineage": {
       "title": "Resource Lineage",
