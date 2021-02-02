@@ -27,10 +27,7 @@
     "statistics": {
       "title": "Statistics",
       "description": "Detailed multi-line description to fully explain the Item.",
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "type": "object"
     }
   }
 }
