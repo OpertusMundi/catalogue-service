@@ -1,7 +1,7 @@
 from flask_restx import fields, inputs
 from catalogueapi.api.restx import api
 
-polygon = api.model('Polygon geometry', {
+polygon = api.model('polygon geometry', {
     'type': fields.String(description='Type of geometry', default="Polygon"),
     'coordinates': fields.List(fields.List(
         fields.List(fields.Float, type="Array"),
@@ -15,13 +15,37 @@ polygon = api.model('Polygon geometry', {
     )
 })
 
-properties = api.model('Properties of an item', {
+keyword = api.model('keyword', { 
+        'keyword': fields.String(description='keyword value'),
+        'theme': fields.String(description='a related theme')
+} )
+
+scale = api.model('scale', { 
+        'scale': fields.Integer(description='scale value'),
+        'theme': fields.String(description='a short description')
+} )
+
+additional_resources = api.model('additional_resources', { 
+        'id': fields.String(),
+        'type': fields.String(),
+        'value': fields.String(),
+        'name': fields.String()
+} )
+
+resources = api.model('resources', { 
+        'id': fields.String(),
+        'category': fields.String(),
+        'value': fields.String(),
+        'format': fields.String()
+} )
+
+properties = api.model('properties of an item', {
     'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
-    'type': fields.String(description='The nature or genre of the resource'),
-    'spatial_data_service_type': fields.String(description='The nature or genre of the service'),
+    'type': fields.String(description='The nature or genre of the resource', enum = ["raster", "vector", "service"]),
+    'spatial_data_service_type': fields.String(description='The nature or genre of the service', enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
     'format': fields.String(description='The file format, physical medium, or dimensions of the resource'),
-    'keywords': fields.List(fields.String(description='The topic of the resource')),
+    'keywords':  fields.List(fields.Nested(keyword,description='The topic of the resource')),
     'publisher_name': fields.String(description='Name of an entity responsible for making the resource available'),
     'publisher_email': fields.String(description='Email of an entity responsible for making the resource available'),
     'publisher_id': fields.String(description='Id of an entity responsible for making the resource available'),
@@ -38,13 +62,14 @@ properties = api.model('Properties of an item', {
                     where the data can be downloaded, or to where additional information about the resource may be provided'),
     'license': fields.String(description='Information about resource licensing'),
     'topic_category': fields.List(fields.String(description='A high-level classification scheme to assist in the grouping and topic-based \
-                    search of available spatial data resources')),
+                    search of available spatial data resources', enum=["Biota", "Boundaries", "Climatology / Meteorology / Atmosphere", "Economy", "Elevation", "Environment", 
+                    "Farming", "Geoscientific Information", "Health", "Imagery / Base Maps / Earth Cover", "Inland Waters", "Intelligence / Military", "Location", "Oceans", 
+                    "Planning / Cadastre", "Society", "Structure", "Transportation", "Utilities / Communication"])),
     'reference_system': fields.String(description='Information about the reference system'),
     'spatial_resolution': fields.Integer(description='Spatial resolution refers to the level of detail of the data set'),
-    'scale': fields.Integer(description='Denominator of the scale of the data set'),
-    'version': fields.String(description='Version of the resource'),
-    'conformity': fields.String(description='Degree of conformity with the implementing rules/standard of the metadata followed'),
-    'additional_resources': fields.String(description='Auxiliary files or additional resources to the dataset.'),
+    'scales':  fields.List(fields.Nested(scale,description='Scale refers to the level of detail of the data set')),
+    'conformity': fields.String(description='Degree of conformity with the implementing rules/standard of the metadata followed', enum=["conformant", "not conformant", "not evaluated"]),
+    'additional_resources':  fields.List(fields.Nested(additional_resources,description='Auxiliary files or additional resources to the dataset.')),
     'public_access_limitations': fields.String(description='Information on the limitations and the reasons for them'),
 
     'metadata_language': fields.String(description='The language in which the metadata elements are expressed'),
@@ -53,14 +78,16 @@ properties = api.model('Properties of an item', {
     'metadata_point_of_contact_email': fields.String(description='The email of the organisation responsible for the creation \
                      and maintenance of the metadata'),
     'metadata_date': fields.Date(description='The date which specifies when the metadata record was created or updated'),
-    'coupled_resource': fields.String(description='Provides information about the datasets that the service operates on'),
+    'resources':  fields.List(fields.Nested(resources,description='"Provides a list of resources of the dataset')),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
-    'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset')),
-    'store_statistics': fields.Raw(description='Statistics about the store')
+    'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
+    'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
+    'statistics': fields.Raw(description='Statistics about the store (JSON))')
 })
 
-item_geojson = api.model('The item in geojson format',{
+
+item_geojson = api.model('the item in geojson format',{
     'id': fields.String(readOnly=True, description='An unambiguous reference to the resource within a given context'),
     'type': fields.String(description='The type of the geojson', default='Feature'),
     'geometry': fields.Nested(polygon, description='The spatial extent of the resource, the spatial \
@@ -68,8 +95,8 @@ item_geojson = api.model('The item in geojson format',{
     'properties':fields.Nested(properties, description='The properties of the geojson.',required=True)
 })
 
-page_of_items = api.model('A page of results', {
-    'items': fields.List(fields.Raw(description='Returned geojson objects')),
+page_of_items = api.model('a page of results', {
+    'items': fields.List(fields.Nested(item_geojson, description='Returned geojson objects')),
     'page': fields.Integer(description='Number of this page of results'),
     'pages': fields.Integer(description='Total number of pages of results'),
     'per_page': fields.Integer(description='Number of items per page of results'),

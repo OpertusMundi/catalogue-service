@@ -27,7 +27,7 @@ class ItemModel(db.Model):
     spatial_data_service_type = db.Column(
         'spatial_data_service_type', db.Text, index=True)
     format = db.Column('format', db.Text, index=True)
-    keywords = db.Column('keywords', ARRAY(db.Text), index=True)
+    keywords = db.Column('keywords', ARRAY(JSONB), index=True)
     publisher_name = db.Column('publisher_name', db.Text, index=True)
     publisher_email = db.Column('publisher_email', db.Text, index=True)
     publisher_id = db.Column('publisher_id', db.Text, index=True)
@@ -47,11 +47,11 @@ class ItemModel(db.Model):
 
     reference_system = db.Column('reference_system', db.Text, index=True)
     spatial_resolution = db.Column('spatial_resolution', db.Integer, index=True)
-    scale = db.Column('scale', db.Integer, index=True)
+    scales = db.Column('scale', ARRAY(JSONB), index=True)
     version = db.Column('version', db.Text, index=True)
     conformity = db.Column('conformity', db.Text, index=True)
     additional_resources = db.Column(
-        'additional_resources', ARRAY(db.Text), index=True)
+        'additional_resources', ARRAY(JSONB), index=True)
     public_access_limitations = db.Column(
         'public_access_limitations', db.Text, index=True)
 
@@ -62,14 +62,14 @@ class ItemModel(db.Model):
         'metadata_point_of_contact_email', db.Text, index=True)
     metadata_date = db.Column('metadata_date', db.Date, index=True)
     metadata_version = db.Column('metadata_version', db.Text, index=True)
-    coupled_resource = db.Column('coupled_resource', db.Text, index=True)
+    resources = db.Column('resources', ARRAY(JSONB), index=True)
     lineage = db.Column('lineage', db.Text, index=True)
     parent_id = db.Column('parent_id', db.Text, index=True)
 
     item_geojson = db.Column('item_geojson', JSONB)
 
     pricing_models = db.Column('pricing_models', JSONB)
-    store_statistics = db.Column('store_statistics', JSONB)
+    statistics = db.Column('statistics', JSONB)
 
     automated_metadata = db.Column('automated_metadata', JSONB)
 
@@ -81,6 +81,8 @@ class ItemModel(db.Model):
     accepted_at = db.Column('accepted_at', db.Date, index=True)
 
     visibility = db.Column('visibility', ARRAY(db.Text), index=True)
+
+    suitable_for = db.Column('suitable_for', ARRAY(db.Text), index=True)
 
     ts_vector = func.to_tsvector('english', item_geojson)
 
