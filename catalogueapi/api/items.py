@@ -65,12 +65,12 @@ class Status(Resource):
         status = p.update_status_args.parse_args(request).get('status')
         try:
             actions.update_status(id, status)
-        except:
+        except Exception as ex:
             return{
                 'success': False,
                 'message': {
                     'code': 400,
-                    'description': 'Error updating status.'
+                    'description': 'Error updating status.' + str(ex)
                 }
             }, 400
         return {
@@ -82,13 +82,14 @@ class Status(Resource):
         }, 200
 
 
-@ns.route('/published/<string:id>')
 @api.response(404, 'Item not found.')
-@api.response(200, 'Item found.')
+@ns.route('/published/<string:id>')
 class ItemUnit(Resource):
+
+    @api.response(200, 'Item found.')
     def get(self, id):
         """
-        Returns an item.
+        Returns a published item (including a list of all versions).
         """
 
         try:
@@ -101,8 +102,23 @@ class ItemUnit(Resource):
                     'description': 'No items found'
                 }
             }, 404
+
+        # include previous versions
+        try:
+            history = History.query.filter(History.id == id)
+        except Exception as ex:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Error: ' + ex
+                }
+            }, 404
+        versions = [result.metadata_version]
+        for h in history:
+            versions.append(h.metadata_version)
         return {
-            'result': result.item_geojson,
+            'result': {'item': result.item_geojson, 'versions': versions},
             'success': True,
             'message': {
                 'code': 200,
@@ -191,7 +207,7 @@ class ItemUnit(Resource):
         }, 200
 
     @api.response(404, 'Draft not found.')
-    @api.response(200, 'Draft found.')
+    @api.response(200, 'Draft found.', item_geojson)
     def get(self, id):
         """
         Returns a draft.
@@ -217,6 +233,7 @@ class ItemUnit(Resource):
         }, 200
 
     @api.expect(item_geojson)
+    @api.response(404, 'Error updating draft.')
     @api.response(200, 'Draft successfully updated.')
     def put(self, id):
         """
@@ -244,12 +261,12 @@ class ItemUnit(Resource):
                     'description': 'Draft not found.'
                 }
             }, 404
-        except Exception as e:
+        except Exception as ex:
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'Error updating draft.'
+                    'description': 'Error updating draft.' + str(ex)
                 }
             }, 400
         return {
@@ -284,10 +301,49 @@ class ItemUnit(Resource):
             }
         }, 200
 
+@ns.route('/history/get')
+class ItemUnit(Resource):
+    @api.response(404, 'Version was not found.')
+    @api.response(200, 'Version was found.',item_geojson)
+    @api.expect(p.history_get_args)
+    def get(self):
+        """
+        Returns a specific version of an item.
+        """
+
+        id = p.history_get_args.parse_args(request).get('id')
+        metadata_version = p.history_get_args.parse_args(request).get('metadata_version')
+        
+        found = True
+        try:
+            result = History.query.filter(History.id == id).filter(History.metadata_version == metadata_version).one()
+        except NoResultFound:
+            found = False
+
+        if not found:
+            # search in published
+            try: 
+                result =  Item.query.filter(Item.id == id).filter(Item.metadata_version == metadata_version).one()
+            except NoResultFound:
+                return {
+                    'success': False,
+                    'message': {
+                        'code': 404,
+                        'description': 'Item version was not found.'
+                    }
+                }, 404
+        return {
+            'result': result.item_geojson,
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Item version found'
+            }
+        }, 200
 
 @ns.route('/published/search')
 @api.response(404, 'No items found for this query')
-@api.response(200, 'Items found')
+@api.response(200, 'Items found', page_of_items)
 class ItemCollection(Resource):
 
     # @api.marshal_list_with(page_of_items)
@@ -361,7 +417,7 @@ class ItemCollection(Resource):
 
 @ns.route('/draft/search')
 @api.response(404, 'No drafts found for this query')
-@api.response(200, 'Drafts found')
+@api.response(200, 'Drafts found', page_of_items)
 class DraftCollection(Resource):
 
     # @api.marshal_list_with(page_of_items)
@@ -452,9 +508,11 @@ class ItemCollection(Resource):
             }, 404
 
 
+
+
 @ns.route('/history/search')
 @api.response(404, 'No items found for this query')
-@api.response(200, 'Items found')
+@api.response(200, 'Items found', page_of_items)
 class DraftCollection(Resource):
 
     # @api.marshal_list_with(page_of_items)
@@ -472,6 +530,8 @@ class DraftCollection(Resource):
         per_page = args.get('per_page')
         # Initialize items query
         history = History.query
+        for h in history:
+            log.debug('in if items ', h.id)
 
         # Search by item id
         if item_id:
@@ -482,7 +542,11 @@ class DraftCollection(Resource):
             history = history.filter(History.publisher_id == publisher_id)
 
         # Search by status
-        history = history.filter(History.deleted == deleted)
+        if deleted:
+            history = history.filter(History.deleted == deleted)
+
+        for h in history:
+            log.debug('in if items ', h)
 
         # Add pagination
         result = history.paginate(page, per_page, error_out=False)
