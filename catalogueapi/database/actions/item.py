@@ -114,7 +114,7 @@ def update_status(id, status):
             history.update(id, old_data)
             session.add(history)
             # increment metadata version number
-            metadata_version = data['properties'].get('version')
+            metadata_version = data['properties'].get('metadata_version')
             metadata_version = metadata_version.split('.')
             metadata_version[-1] = str(int(metadata_version[-1]) + 1)
             data['properties']['metadata_version'] = '.'.join(metadata_version)

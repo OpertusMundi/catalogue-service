@@ -7,7 +7,7 @@ from flask_restx import Resource
 from flask_restx import marshal
 import catalogueapi.database.actions.item as actions
 from catalogueapi.database.actions.harvest import harvest
-from catalogueapi.api.serializers import item_geojson, page_of_items
+from catalogueapi.api.serializers import item_geojson, page_of_items, published_item
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item, Draft, History
@@ -86,7 +86,7 @@ class Status(Resource):
 @ns.route('/published/<string:id>')
 class ItemUnit(Resource):
 
-    @api.response(200, 'Item found.')
+    @api.response(200, 'Item found.', published_item)
     def get(self, id):
         """
         Returns a published item (including a list of all versions).
@@ -114,9 +114,10 @@ class ItemUnit(Resource):
                     'description': 'Error: ' + ex
                 }
             }, 404
-        versions = [result.metadata_version]
+        versions = [result.version]
         for h in history:
-            versions.append(h.metadata_version)
+            if h.version not in versions:
+                versions.append(h.version)
         return {
             'result': {'item': result.item_geojson, 'versions': versions},
             'success': True,
@@ -143,7 +144,8 @@ class ItemUnit(Resource):
         * Specify the ID of the item to modify in the request URL path.
         """
         data = request.json
-        actions.update_item(id, data)
+        item = Item.query.filter(Item.id == id).one()
+        actions.update_item(item, data)
         return 'Item successfully updated.', 200
 
     @api.response(200, 'Item successfully deleted.')
@@ -312,18 +314,23 @@ class ItemUnit(Resource):
         """
 
         id = p.history_get_args.parse_args(request).get('id')
-        metadata_version = p.history_get_args.parse_args(request).get('metadata_version')
+        version = p.history_get_args.parse_args(request).get('version')
         
-        found = True
-        try:
-            result = History.query.filter(History.id == id).filter(History.metadata_version == metadata_version).one()
-        except NoResultFound:
-            found = False
-
-        if not found:
+        result = History.query.filter(History.id == id).filter(History.version == version).all()
+        if result:
+            # select latest metadata version
+            latest_item =  result[0]
+            latest_version = int(latest_item.metadata_version.split('.')[-1])
+            for item in result:
+                vers = int(item.metadata_version.split('.')[-1])
+                if vers > latest_version:
+                    latest_version = vers
+                    latest_item = item
+            result = latest_item
+        else:   
             # search in published
             try: 
-                result =  Item.query.filter(Item.id == id).filter(Item.metadata_version == metadata_version).one()
+                result =  Item.query.filter(Item.id == id).filter(Item.version == version).one()
             except NoResultFound:
                 return {
                     'success': False,
@@ -332,6 +339,7 @@ class ItemUnit(Resource):
                         'description': 'Item version was not found.'
                     }
                 }, 404
+
         return {
             'result': result.item_geojson,
             'success': True,
@@ -530,8 +538,6 @@ class DraftCollection(Resource):
         per_page = args.get('per_page')
         # Initialize items query
         history = History.query
-        for h in history:
-            log.debug('in if items ', h.id)
 
         # Search by item id
         if item_id:
@@ -545,8 +551,6 @@ class DraftCollection(Resource):
         if deleted:
             history = history.filter(History.deleted == deleted)
 
-        for h in history:
-            log.debug('in if items ', h)
 
         # Add pagination
         result = history.paginate(page, per_page, error_out=False)

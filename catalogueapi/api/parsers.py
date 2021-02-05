@@ -31,7 +31,7 @@ history_search_args.add_argument('per_page', type=int, required=False,
 
 history_get_args = reqparse.RequestParser()
 history_get_args.add_argument('id', type=str, required=True, default="", help='Item id')
-history_get_args.add_argument('metadata_version', type=str, required=True, default="", help='Item metadata version')
+history_get_args.add_argument('version', type=str, required=True, default="", help='Item version')
 
 id_args = reqparse.RequestParser()
 id_args.add_argument('id', type=str, required=True, action='split', help='Ids of the items')
