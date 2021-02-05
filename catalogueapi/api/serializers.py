@@ -39,6 +39,7 @@ resources = api.model('resources', {
         'format': fields.String()
 } )
 
+
 properties = api.model('properties of an item', {
     'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
@@ -50,6 +51,8 @@ properties = api.model('properties of an item', {
     'publisher_email': fields.String(description='Email of an entity responsible for making the resource available'),
     'publisher_id': fields.String(description='Id of an entity responsible for making the resource available'),
     'language': fields.String(description='A language of the resource'),
+    'status': fields.String(readonly = True, description='The status of the item'),
+
     'date_start': fields.Date(description='The temporal extent of the resource (start date)'),
     'date_end': fields.Date(description='The temporal extent of the resource (end date))'),
     'creation_date': fields.Date(description='A point or period of time associated with the creation event \
@@ -58,6 +61,7 @@ properties = api.model('properties of an item', {
                     in the lifecycle of the resource'),
     'revision_date': fields.Date(description='A point or period of time associated with the revision event  \
                     in the lifecycle of the resource '),
+
     'resource_locator': fields.String(description='The ‘navigation section’ of a metadata record which point users to the location (URL) \
                     where the data can be downloaded, or to where additional information about the resource may be provided'),
     'license': fields.String(description='Information about resource licensing'),
@@ -71,6 +75,7 @@ properties = api.model('properties of an item', {
     'conformity': fields.String(description='Degree of conformity with the implementing rules/standard of the metadata followed', enum=["conformant", "not conformant", "not evaluated"]),
     'additional_resources':  fields.List(fields.Nested(additional_resources,description='Auxiliary files or additional resources to the dataset.')),
     'public_access_limitations': fields.String(description='Information on the limitations and the reasons for them'),
+    'version': fields.String( description='Version of the resource'),
 
     'metadata_language': fields.String(description='The language in which the metadata elements are expressed'),
     'metadata_point_of_contact_name': fields.String(description='The name of the organisation responsible for the creation \
@@ -78,10 +83,13 @@ properties = api.model('properties of an item', {
     'metadata_point_of_contact_email': fields.String(description='The email of the organisation responsible for the creation \
                      and maintenance of the metadata'),
     'metadata_date': fields.Date(description='The date which specifies when the metadata record was created or updated'),
+    'metadata_version': fields.String(readOnly=True, description='Version of the metadata record'),
+    
     'resources':  fields.List(fields.Nested(resources,description='"Provides a list of resources of the dataset')),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
+    'automated_metadata': fields.Raw(description='Automated metadata of the dataset (JSON)'),
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))')
 })
@@ -103,5 +111,8 @@ page_of_items = api.model('a page of results', {
     'total': fields.Integer(description='Total number of results'),
 })
 
-
+published_item =  api.model('published_item',{
+    'item': fields.Nested(item_geojson, description='Returned geojson object'),
+    'versions': fields.List(fields.String(description='Item version'), description='A list of all item versions' )
+    }, description='A published item including all versions') 
 
