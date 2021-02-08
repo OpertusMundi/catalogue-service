@@ -14,7 +14,7 @@ cd /home/flask/catalogueapi
 # Configure and start WSGI server
 python app.py
 
-# if [ $FLASK_ENV == "development" ]; then
+# if [ $FLASK_DEBUG == "True" ]; then
 #   # Run a development server
 #   python app.py
 # else
