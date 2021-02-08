@@ -19,7 +19,7 @@ services:
     container_name: catalogue
     build: .
     environment:
-        SERVER_NAME: 0.0.0.0:5000
+        SERVER_NAME: 127.0.0.1:5000
         SQLALCHEMY_DATABASE_URI: postgresql://postgres:mypass@db:5432/catalogue
         SQLALCHEMY_TRACK_MODIFICATIONS: "False"
         ERROR_404_HELP: "False"
