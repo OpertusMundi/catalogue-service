@@ -11,18 +11,29 @@ logging_conf_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..
 logging.config.fileConfig(logging_conf_path)
 log = logging.getLogger(__name__)
 
+class MissingEnvironmentVariable(Exception):
+    pass
 
 def configure_app(flask_app):
-    # initialize config option from file
-    flask_app.config.from_pyfile('config.py')
-    # replace with environmental values if existing
-    flask_app.config['SERVER_NAME'] = os.environ.get("SERVER_NAME", flask_app.config['SERVER_NAME']) 
-    flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI", flask_app.config['SQLALCHEMY_DATABASE_URI'])
-    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS']) 
-    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = os.environ.get("SWAGGER_UI_DOC_EXPANSION", flask_app.config['SWAGGER_UI_DOC_EXPANSION']) 
-    flask_app.config['RESTX_VALIDATE'] = os.environ.get("RESTX_VALIDATE", flask_app.config['RESTX_VALIDATE']) 
-    flask_app.config['RESTX_MASK_SWAGGER'] = os.environ.get("RESTX_MASK_SWAGGER", flask_app.config['RESTX_MASK_SWAGGER']) 
-    flask_app.config['ERROR_404_HELP'] = os.environ.get("ERROR_404_HELP", flask_app.config['ERROR_404_HELP']) 
+    
+    log.debug('loading config options')
+
+    # initialize with environmental values
+    flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    flask_app.config['SERVER_NAME'] = os.environ.get("SERVER_NAME", 'localhost:5000')
+    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", False ) 
+    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = os.environ.get("SWAGGER_UI_DOC_EXPANSION", list) 
+    flask_app.config['RESTX_VALIDATE'] = os.environ.get("RESTX_VALIDATE", True) 
+    flask_app.config['RESTX_MASK_SWAGGER'] = os.environ.get("RESTX_MASK_SWAGGER", False) 
+    flask_app.config['ERROR_404_HELP'] = os.environ.get("ERROR_404_HELP", False)
+    flask_app.config['FLASK_DEBUG'] = os.environ.get("FLASK_DEBUG", False) 
+
+     # replace with config options from file if existing
+    if os.path.exists('config.py'):
+        flask_app.config.from_pyfile('config.py')
+    
+    if not flask_app.config.get('SQLALCHEMY_DATABASE_URI'):    
+        raise MissingEnvironmentVariable("SQLALCHEMY_DATABASE_URI is missing")
     
 
 def initialize_app(flask_app):
