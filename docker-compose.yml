@@ -4,7 +4,7 @@ services:
 
   db:
     container_name: db
-    image: postgis/postgis:12-3.0
+    image: postgis/postgis:12-3.1
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypass
@@ -20,6 +20,7 @@ services:
     environment:
         SERVER_NAME: localhost:5000
         SQLALCHEMY_DATABASE_URI: postgresql://postgres:mypass@db:5432/catalogue'
+        FLASK_ENV: development
     ports:
       - 5000:5000
 
