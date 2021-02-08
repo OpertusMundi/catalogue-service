@@ -20,12 +20,12 @@ services:
     environment:
         SERVER_NAME: localhost:5000
         SQLALCHEMY_DATABASE_URI: postgresql://postgres:mypass@db:5432/catalogue'
-        SQLALCHEMY_TRACK_MODIFICATIONS: False
-        ERROR_404_HELP: False
-        RESTX_MASK_SWAGGER: False
-        RESTX_VALIDATE: True
+        SQLALCHEMY_TRACK_MODIFICATIONS: "False"
+        ERROR_404_HELP: "False"
+        RESTX_MASK_SWAGGER: "False"
+        RESTX_VALIDATE: "True"
         SWAGGER_UI_DOC_EXPANSION: list
-        FLASK_DEBUG: True
+        FLASK_DEBUG: "True"
     ports:
       - 5000:5000
 
