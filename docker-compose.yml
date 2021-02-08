@@ -16,10 +16,11 @@ services:
       - 5432:5432
 
   api:
+    container_name: catalogue
     build: .
     environment:
         SERVER_NAME: localhost:5000
-        SQLALCHEMY_DATABASE_URI: postgresql://postgres:mypass@db:5432/catalogue'
+        SQLALCHEMY_DATABASE_URI: postgresql://postgres:mypass@db:5432/catalogue
         SQLALCHEMY_TRACK_MODIFICATIONS: "False"
         ERROR_404_HELP: "False"
         RESTX_MASK_SWAGGER: "False"
