@@ -4,6 +4,9 @@ set -e
 
 export FLASK_APP="catalogueapi"
 
+# Wait for database to startup
+wait-for-it -t 30 "db:5432"
+
 # Initialize database
 flask init-db
 

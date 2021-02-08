@@ -30,7 +30,7 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN python3 -m pip install --editable .
 
 USER flask
-CMD ["/usr/bin/wait-for-it" "db:5432" "--" "/usr/local/bin/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 5000
 EXPOSE 5443
