@@ -120,7 +120,7 @@ class ItemUnit(Resource):
                 versions.append(h.version)
         result.item_geojson['properties']['versions'] = versions
         return {
-            'result': {'item': result.item_geojson},
+            'result': result.item_geojson,
             'success': True,
             'message': {
                 'code': 200,

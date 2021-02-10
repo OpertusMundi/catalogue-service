@@ -93,7 +93,7 @@ properties = api.model('properties of an item', {
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
 
-    'versions': fields.String( description='All versions of the resource'),
+    'versions':  fields.List(fields.String(), description='All versions of the resource'),
 })
 
 
