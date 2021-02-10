@@ -91,7 +91,9 @@ properties = api.model('properties of an item', {
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
     'automated_metadata': fields.Raw(description='Automated metadata of the dataset (JSON)'),
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
-    'statistics': fields.Raw(description='Statistics about the store (JSON))')
+    'statistics': fields.Raw(description='Statistics about the store (JSON))'),
+
+    'versions': fields.String( description='All versions of the resource'),
 })
 
 
@@ -110,9 +112,4 @@ page_of_items = api.model('a page of results', {
     'per_page': fields.Integer(description='Number of items per page of results'),
     'total': fields.Integer(description='Total number of results'),
 })
-
-published_item =  api.model('published_item',{
-    'item': fields.Nested(item_geojson, description='Returned geojson object'),
-    'versions': fields.List(fields.String(description='Item version'), description='A list of all item versions' )
-    }, description='A published item including all versions') 
 
