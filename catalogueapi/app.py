@@ -20,17 +20,20 @@ def configure_app(flask_app):
 
     # initialize with environmental values
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI")
-    flask_app.config['SERVER_NAME'] = os.environ.get("SERVER_NAME", 'localhost:5000')
+    flask_app.config['SERVER_HOST'] = os.environ.get("SERVER_HOST", 'localhost')
+    flask_app.config['SERVER_PORT'] = os.environ.get("SERVER_PORT", '5000')
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", False ) 
     flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = os.environ.get("SWAGGER_UI_DOC_EXPANSION", list) 
     flask_app.config['RESTX_VALIDATE'] = os.environ.get("RESTX_VALIDATE", True) 
     flask_app.config['RESTX_MASK_SWAGGER'] = os.environ.get("RESTX_MASK_SWAGGER", False) 
     flask_app.config['ERROR_404_HELP'] = os.environ.get("ERROR_404_HELP", False)
-    flask_app.config['FLASK_DEBUG'] = os.environ.get("FLASK_DEBUG", False) 
+    flask_app.config['FLASK_DEBUG'] = os.environ.get("FLASK_DEBUG", False)
 
      # replace with config options from file if existing
     if os.path.exists('config.py'):
         flask_app.config.from_pyfile('config.py')
+
+    flask_app.config['SERVER_NAME'] = "%s:%s" % (flask_app.config['SERVER_HOST'], flask_app.config['SERVER_PORT'])
     
     if not flask_app.config.get('SQLALCHEMY_DATABASE_URI'):    
         raise MissingEnvironmentVariable("SQLALCHEMY_DATABASE_URI is missing")
@@ -52,7 +55,7 @@ def initialize_app(flask_app):
 def main():
     initialize_app(app)
     log.info('>>>>> Starting development server at http://{}/api/ <<<<<'.format(app.config['SERVER_NAME']))
-    app.run(host="0.0.0.0",port=5000,debug=app.config['FLASK_DEBUG']);
+    app.run(host="0.0.0.0",port=app.config['SERVER_PORT'],debug=app.config['FLASK_DEBUG']);
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
-SERVER_NAME = 'localhost:5000'
+SERVER_HOST = 'localhost'
+SERVER_PORT = '5000'
 FLASK_DEBUG = True
 
 SWAGGER_UI_DOC_EXPANSION = list
