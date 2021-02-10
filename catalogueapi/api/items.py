@@ -7,7 +7,7 @@ from flask_restx import Resource
 from flask_restx import marshal
 import catalogueapi.database.actions.item as actions
 from catalogueapi.database.actions.harvest import harvest
-from catalogueapi.api.serializers import item_geojson, page_of_items, published_item
+from catalogueapi.api.serializers import item_geojson, page_of_items
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item, Draft, History
@@ -86,7 +86,7 @@ class Status(Resource):
 @ns.route('/published/<string:id>')
 class ItemUnit(Resource):
 
-    @api.response(200, 'Item found.', published_item)
+    @api.response(200, 'Item found.', item_geojson)
     def get(self, id):
         """
         Returns a published item (including a list of all versions).
@@ -118,8 +118,9 @@ class ItemUnit(Resource):
         for h in history:
             if h.version not in versions:
                 versions.append(h.version)
+        result.item_geojson['properties']['versions'] = versions
         return {
-            'result': {'item': result.item_geojson, 'versions': versions},
+            'result': {'item': result.item_geojson},
             'success': True,
             'message': {
                 'code': 200,
