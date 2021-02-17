@@ -595,7 +595,7 @@ class Harvest(Resource):
         harvester = p.harvest_args.parse_args(request).get('harvester')
         log.info('Harvesting from: ' + url)
         try:
-            harvest(url, harvester)
+            total = harvest(url, harvester)
         except Exception as ex:
             return {
                 'success': False,
@@ -608,7 +608,7 @@ class Harvest(Resource):
             'success': True,
             'message': {
                 'code': 200,
-                'description': 'Harvested successfuly from remote catalogue: ' + url
+                'description': 'Harvested successfuly {0} datasets from {1} remote catalogue: {2}'.format(total, harvester, url)
             }
         }, 200
 

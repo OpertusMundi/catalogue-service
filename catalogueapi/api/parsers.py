@@ -42,4 +42,4 @@ update_status_args.add_argument('status', type=str, required=True, default="", h
 
 harvest_args = reqparse.RequestParser()
 harvest_args.add_argument('url', type=inputs.URL(schemes=['http', 'https'], local=True, port=True, ip=True), required=True, help='Harvest url')
-harvest_args.add_argument('harvester', type=str, required=True, default="op-catalogue", help='Target catalogue type (op-catalogue/ckan)')
+harvest_args.add_argument('harvester', type=str, required=True, default="opertusmundi", help='Target catalogue type (opertusmundi/ckan/csw)')
