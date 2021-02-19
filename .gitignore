@@ -1,4 +1,6 @@
 catalogueapi.egg-info/
+build/
+dist/
 *.pyc
 __pycache__
 config.py
