@@ -13,14 +13,11 @@ session = db.session
 
 
 def create_item(data):
-    if not 'id' in data or not is_valid_uuid(data['id']):
-        id = str(uuid.uuid4())
-    else:
-        id = data['id']
     item = Item()
     if not data['properties'].get('metadata_version'):
         data['properties']['metadata_version'] = '1.0'
     data['properties']['created_at'] = datetime.now()
+    id = data['id']
     item.update(id, data)
     session.add(item)
     session.commit()
@@ -54,16 +51,13 @@ def delete_item(id):
 
 
 def create_draft(data):
-    if not 'id' in data or not is_valid_uuid(data['id']):
-        id = str(uuid.uuid4())
-    else:
-        id = data['id']
     draft = Draft()
     data['properties']['status'] = 'draft'
     if not data['properties'].get('version'):
         data['properties']['version'] = '1.0'
     data['properties']['metadata_version'] = '1.0'
     data['properties']['created_at'] = datetime.now()
+    id = data['id']
     draft.update(id, data)
     session.add(draft)
     session.commit()
@@ -133,14 +127,6 @@ def update_status(id, status):
         session.add(draft)
     session.commit()
     log.info('Updated item %s with status %s', id, status)
-
-
-def is_valid_uuid(uuid_to_test, version=4):
-    try:
-        s = uuid.UUID(uuid_to_test, version=version)
-    except ValueError:
-        return False
-    return True
 
 
 def validate_input(data):
