@@ -176,3 +176,14 @@ class History(ItemModel):
             postgresql_using='gin'
         ),
     )
+
+class Harvest(ItemModel):
+    __tablename__ = "harvest"
+
+    __table_args__ = (
+        db.Index(
+            'harvested_index',
+            ItemModel.ts_vector,
+            postgresql_using='gin'
+        ),
+    )

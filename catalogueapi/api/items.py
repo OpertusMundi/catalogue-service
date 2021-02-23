@@ -10,7 +10,7 @@ from catalogueapi.database.actions.harvest import harvest
 from catalogueapi.api.serializers import item_geojson, page_of_items
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
-from catalogueapi.database.model.item import Item, Draft, History
+from catalogueapi.database.model.item import Item, Draft, History, Harvest
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
@@ -585,7 +585,7 @@ class DraftCollection(Resource):
 @ns.route('/harvest')
 @api.response(400, 'Error harvesting')
 @api.response(200, 'Harvested successfuly from remote catalogue.')
-class Harvest(Resource):
+class HarvestCollection(Resource):
     @api.expect(p.harvest_args)
     def post(self):
         """
@@ -601,7 +601,7 @@ class Harvest(Resource):
                 'success': False,
                 'message': {
                     'code': 400,
-                    'description': 'Error harvesting' + str(ex)
+                    'description': 'Error harvesting ' + str(ex)
                 }
             }, 400
         return {
@@ -612,6 +612,41 @@ class Harvest(Resource):
             }
         }, 200
 
+@ns.route('/draft/create_from_harvest/<string:id>')
+class ItemUnit(Resource):
+    @api.response(404, 'Published item not found.')
+    @api.response(200, 'Draft successfully created.')
+    def post(self, id):
+        """
+        Creates a new draft from an existing harvest item.
+        """
+        try:
+            harvest = Harvest.query.filter(Harvest.id == id).one()
+            actions.create_draft_from_item(harvest)
+            actions.delete_harvested_item(harvest.id)
+        except NoResultFound:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Harvest item not found.'
+                }
+            }, 404
+        except IntegrityError:
+            return {
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': 'Draft for this harvested item already exists.'
+                }
+            }, 400
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Draft successfully created.'
+            }
+        }, 200
 
 @ns.route('/validate_schema')
 @api.response(400, 'Invalid schema')

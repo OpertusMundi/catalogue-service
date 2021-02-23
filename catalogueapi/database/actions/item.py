@@ -6,7 +6,7 @@ import pkgutil
 from datetime import datetime
 from jsonschema import validate
 from catalogueapi.database import db
-from catalogueapi.database.model.item import Item, Draft, History
+from catalogueapi.database.model.item import Item, Draft, History, Harvest
 
 log = logging.getLogger(__name__)
 session = db.session
@@ -92,6 +92,38 @@ def delete_draft(id):
     session.delete(draft)
     session.commit()
     log.info('Deleted draft %s', id)
+
+
+def create_harvested_item(data):
+    id = data['id']
+    harvest = Harvest()
+    if not data['properties'].get('metadata_version'):
+        data['properties']['metadata_version'] = '1.0'
+    data['properties']['created_at'] = datetime.now()
+    harvest.update(id, data)
+    session.add(harvest)
+    session.commit()
+    log.info('Created harvested item %s', id)
+    return harvest
+
+
+def update_harvested_item(harvest, data):
+
+    data['properties']['metadata_date'] = datetime.now()
+    harvest.update(harvest.id, data)
+    session.add(harvest)
+    session.commit()
+
+    log.info('Updated harvested item %s', id)
+
+
+def delete_harvested_item(id):
+
+    harvest = session.query(Harvest).get(id)
+    session.delete(harvest)
+    session.commit()
+    log.info('Deleted harvest %s', id)
+
 
 
 def update_status(id, status):

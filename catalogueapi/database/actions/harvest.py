@@ -5,7 +5,7 @@ from owslib.iso import *
 from owslib.csw import CatalogueServiceWeb
 
 import catalogueapi.database.actions.item as actions
-from catalogueapi.database.model.item import Item
+from catalogueapi.database.model.item import Harvest
 
 log = logging.getLogger(__name__)
 
@@ -14,36 +14,38 @@ def harvest(url, harvester='csw'):
     result = requests.get(url)
     if harvester == 'opertusmundi':
         items = result.json().get('result').get('items')
-        harvested = _from_op_catalogue(items, url)
+        new_items = _from_op_catalogue(items, url)
     elif harvester == 'ckan':
         items = result.json().get('result').get('results')
-        harvested = _from_ckan(items, url)
+        new_items = _from_ckan(items, url)
     elif harvester == 'csw':
-        harvested = _from_csw(url)
-    items = Item.query
+        new_items = _from_csw(url)
+
+    harvests = Harvest.query
     harvested_ids = []
 
-    for harvest in harvested:
-        id = harvest.get('id')
-        item = items.filter(Item.id == id).first()
-        if not item:
+    for data in new_items:
+        id = data.get('id')
+        harvest = harvests.filter(Harvest.id == id).first()
+        if not harvest:
             log.info('Harvesting item %s', id)
-            actions.create_item(harvest)
-        # update if version is changed
-        elif harvest['properties']['metadata_version'] and item.metadata_version != harvest['properties']['metadata_version']:
-            actions.update_item(item, harvest)
+            actions.create_harvested_item(data)
+        # update if it exists
+        else:
+            actions.update_harvested_item(harvest, data)
         harvested_ids.append(id)
-    # update any existing harvested data deleted in remote
-    items = items.filter(Item.harvested_from == url)
-    for item in (item for item in items if item.id not in harvested_ids):
-        actions.delete_item(item.id)
+    # delete any existing harvested data deleted in remote
+    harvests = harvests.filter(Harvest.harvested_from == url)
+    for harvest in (h for h in harvests if h.id not in harvested_ids):
+        log.debug('Deleting harvest %s', harvest.id)
+        actions.delete_harvested_item(harvest.id)
     
-    return len(harvested)
+    return len(new_items)
 
 
-def _from_ckan(harvested, url):
+def _from_ckan(new_items, url):
     result = []
-    for h in harvested:
+    for h in new_items:
         item = {}
         item['properties'] = {}
         item['id'] = h.get('id')
@@ -96,9 +98,9 @@ def _from_ckan(harvested, url):
     return result
 
 
-def _from_op_catalogue(harvested, url):
+def _from_op_catalogue(new_items, url):
     result= []
-    for h in harvested:
+    for h in new_items:
         h['properties']['harvested_from']= url
         h['properties']['harvest_json']= json.dumps(h)
         result.append(h)
