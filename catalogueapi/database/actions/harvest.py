@@ -6,6 +6,7 @@ from owslib.csw import CatalogueServiceWeb
 
 import catalogueapi.database.actions.item as actions
 from catalogueapi.database.model.item import Harvest
+from catalogueapi.api.helpers import convert_from_iso
 
 log = logging.getLogger(__name__)
 
@@ -136,42 +137,7 @@ def _from_csw(url):
 
         # harvest each record
         for key, value in src.records.items():
-            item = {}
-            item['id'] = value.identifier
-            item['properties'] = {}
-            item['properties']['title']= value.identification.title
-            item['properties']['abstract']= value.identification.abstract
-            item['properties']['keywords'] = []
-            for k in value.identification.keywords2:
-                for key in k.keywords:
-                    theme = ''
-                    if k.thesaurus:
-                        theme = k.thesaurus['title']
-                    item['properties']['keywords'].append({'keyword': key , 'theme': theme })
-
-            for t in value.identification.topiccategory:
-                item['properties']['keywords'].append({'keyword': t , 'theme': '' })
-            item['properties']['license']= value.identification.uselimitation
-            item['properties']['date_start'] = value.identification.temporalextent_start
-            item['properties']['date_end'] = value.identification.temporalextent_end
-
-            bbox = value.identification.bbox
-            if bbox:
-                item['geometry'] = {'type': 'Polygon'}
-                item['geometry']['coordinates'] = [[[float(bbox.minx), float(bbox.miny)],
-                                                        [float(bbox.minx), float(bbox.maxy)],
-                                                        [float(bbox.maxx), float(bbox.maxy)],
-                                                        [float(bbox.maxx), float(bbox.miny)],
-                                                        [float(bbox.minx), float(bbox.miny)]]]
-            if value.contact:
-                item['properties']['metadata_point_of_contact_email'] = value.contact[0].email
-                item['properties']['metadata_point_of_contact_name'] = value.contact[0].name
-            l = value.languagecode
-            if l == 'eng': l = 'en'
-            elif l == 'gre': l = 'el'
-            item['properties']['language']= l
-            item['properties']['reference_system']= value.referencesystem.code
-            item['properties']['lineage'] = value.dataquality.lineage
+            item = convert_from_iso(value)
 
             item['properties']['harvested_from']= url
             item['properties']['harvest_json']= value.xml.decode()
