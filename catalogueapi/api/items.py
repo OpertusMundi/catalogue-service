@@ -11,9 +11,12 @@ from catalogueapi.api.serializers import item_geojson, page_of_items
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Item, Draft, History, Harvest
+from catalogueapi.api.helpers import convert_from_iso
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
+
+from owslib.iso import *
 
 log = logging.getLogger(__name__)
 
@@ -611,6 +614,42 @@ class HarvestCollection(Resource):
                 'description': 'Harvested successfuly {0} datasets from {1} remote catalogue: {2}'.format(total, harvester, url)
             }
         }, 200
+
+@ns.route('/draft/create_from_iso/')
+class ItemCollection(Resource):
+    @api.expect(p.iso_arg)
+    @api.response(200, 'Draft successfully created.')
+    @api.response(400, 'Error creating draft.')
+    def post(self):
+        """
+        Creates a new item (draft) from iso(xml).
+        """
+        iso = p.iso_arg.parse_args(request).get('xml')
+
+        md = MD_Metadata(etree.fromstring(iso))
+        converted_data = convert_from_iso(md)
+
+        try:
+            actions.validate_input(converted_data)
+        except Exception as ex:
+            return {
+                'success': True,
+                'message': {
+                    'code': 400,
+                    'description': str(ex)
+                }
+            }, 400
+
+        id = actions.create_draft(converted_data)
+
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Draft successfully created.'
+            }
+        }, 200
+
 
 @ns.route('/draft/create_from_harvest/<string:id>')
 class ItemUnit(Resource):
