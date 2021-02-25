@@ -48,10 +48,10 @@
     "metadata":{
       "allOf": [
         {
-          "$ref": "file:resources/core.json"
+          "$ref": "file:catalogueapi/resources/core.json"
         },
         {
-          "$ref": "file:resources/extended.json"
+          "$ref": "file:catalogueapi/resources/extended.json"
         }
       ]
     }
