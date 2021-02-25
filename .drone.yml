@@ -1,0 +1,112 @@
+---
+
+kind: pipeline
+type: docker
+name: default
+
+environment:
+  POSTGRES_HOST: postgis-1
+  POSTGRES_PORT: '5432'
+  DB_NAME: catalogue
+  DB_USER: tester1
+
+#
+# Steps
+#
+
+steps:
+
+- name: setup-postgis-database
+  image: postgres:10.14-alpine
+  when:
+    event:
+    - push
+    - tag
+  environment:
+    POSTGRES_PASSWORD:
+      from_secret: postgres_password
+  commands:
+  - export PGHOST=$${POSTGRES_HOST} PGPORT=$${POSTGRES_PORT}
+  - (t=30; sleep 5s; while ! pg_isready -U postgres -t 5; do t=$((t - 1)); test $${t} -ne 0; sleep 3s; done)
+  # Setup client
+  - touch ~/.pgpass && chmod og-rwx ~/.pgpass
+  - touch .postgres-test-password && chmod og-rwx .postgres-test-password
+  - dd if=/dev/urandom bs=6 count=1 | base64 > .postgres-test-password
+  - db_password=$(cat .postgres-test-password) 
+  - echo "$${POSTGRES_HOST}:$${POSTGRES_PORT}:*:postgres:$${POSTGRES_PASSWORD}" >> ~/.pgpass
+  - echo "$${POSTGRES_HOST}:$${POSTGRES_PORT}:*:$${DB_USER}:$${db_password}" >> ~/.pgpass
+  # Create user/database for tests
+  - echo "CREATE USER \"$${DB_USER}\" WITH PASSWORD '$${db_password}'" | psql -U postgres
+  - echo "CREATE DATABASE \"$${DB_NAME}\" WITH OWNER \"$${DB_USER}\" TEMPLATE template_postgis" | psql -U postgres
+  - psql -U postgres -l -A -t
+  - psql -U "$${DB_USER}" -d "$${DB_NAME}" -A -t -c '\d'
+
+- name: nosetests
+  image: python:3.8-slim-buster
+  when:
+    event:
+    - push
+  environment:
+    {}
+  commands:
+  - pip3 install -r requirements.txt -r requirements-testing.txt
+  - python setup.py install
+  # Prepare environment for tests
+  - sed -e '/^SECRET_KEY=/d' -e '/^SQLALCHEMY_DATABASE_URI=/d' config.py.example > config-testing.py
+  - secret_key=$(dd if=/dev/urandom bs=9 count=1 | base64)
+  - echo "SECRET_KEY='$${secret_key}'" >> config-testing.py
+  - db_password=$(cat .postgres-test-password) 
+  - db_url=$(echo "postgresql://$${DB_USER}:$${db_password}@$${POSTGRES_HOST}:$${POSTGRES_PORT}/$${DB_NAME}")
+  - echo "SQLALCHEMY_DATABASE_URI='$${db_url}'" >> config-testing.py
+  # Run tests
+  - env FILE_CONFIG=config-testing.py nosetests -v -s
+
+- name: publish-image-1
+  image: plugins/docker
+  when:
+    event:
+    - tag
+  settings:
+    debug: true
+    username: 
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: opertusmundi/catalogueapi
+    mirror: http://registry-mirror:5000
+    tags:
+    - ${DRONE_TAG}
+    build_args:
+    - VERSION=${DRONE_TAG}
+
+- name: publish-image-2
+  image: plugins/docker
+  when:
+    event:
+    - tag
+  settings:
+    debug: true
+    username: 
+      from_secret: registry_username
+    password:
+      from_secret: registry_password
+    repo: registry-dev-1-opertusmundi:30474/opertusmundi/catalogueapi
+    mirror: http://registry-mirror:5000
+    registry: registry-dev-1-opertusmundi:30474
+    tags:
+    - ${DRONE_TAG}
+    build_args:
+    - VERSION=${DRONE_TAG}
+
+
+#
+# Services
+#
+
+services:
+- name: postgis-1
+  image: postgis/postgis:10-3.0-alpine
+  environment:
+    POSTGRES_PASSWORD:
+      from_secret: postgres_password
+
