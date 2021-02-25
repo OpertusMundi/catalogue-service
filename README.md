@@ -25,13 +25,20 @@ The application is configured using environment variables:
  * `RESTX_MASK_SWAGGER`: a `True/False` flag
  * `ERROR_404_HELP`: a `True/False` flag
  * `FLASK_DEBUG`: a `True/False` flag (should be `False` in a production environment!)
- 
+
+For convenience, these variables can be kept in an enviroment-like file, say `config-development.py` or `config-testing.py`. 
+Look at the example at `config-development.py.example`.  
+
 ## 3. Run
 
-Run a development server:
+Run a development server (environment variables must be set in current shell):
 
     ./wsgi.py
  
+If environment variables are kept in a seperate file, say `development.env`, run by pointing to that file:
+
+    env FILE_CONFIG=config-development.py ./wsgi.py
+
 ## 4. Run with Docker
 
 To run with Docker we must prepare a `docker-compose` recipe.

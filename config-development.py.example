@@ -1,0 +1,10 @@
+# vim: set syntax=python:
+SECRET_KEY='9c2d5b087391c84e1270'
+SQLALCHEMY_DATABASE_URI='postgresql://user:pass@postgres-1-opertusmundi:5432/catalogue'
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+SERVER_NAME=''
+SWAGGER_UI_DOC_EXPANSION='list'
+RESTX_VALIDATE=True
+RESTX_MASK_SWAGGER=False
+ERROR_404_HELP=False
+FLASK_DEBUG=False

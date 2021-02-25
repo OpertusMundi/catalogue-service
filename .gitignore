@@ -10,6 +10,9 @@ config.py
 /data/
 /db-data/
 
+/config.py
+/config-*.py
+
 /docker-compose.yml
 /docker-compose.yml.[1-9]
-/.env
+/*.env
