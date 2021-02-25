@@ -64,3 +64,8 @@ Run:
 
     docker-compose up -d
 
+## 5. API Documentation
+
+The API documentation is using the `OpenAPI` standard.
+You can brownse the documentation [here](https://opertusmundi.github.io/catalogue-service/).
+
