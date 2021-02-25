@@ -1,0 +1,15 @@
+build
+dist
+certs
+data
+db-data
+output
+logs
+temp
+secrets
+data
+README.md
+.env
+docker-compose.yml*
+compose.yml
+compose-testing.yml

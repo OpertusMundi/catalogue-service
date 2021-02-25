@@ -4,3 +4,12 @@ dist/
 *.pyc
 __pycache__
 config.py
+
+/secrets/
+/logs/
+/data/
+/db-data/
+
+/docker-compose.yml
+/docker-compose.yml.[1-9]
+/.env
