@@ -70,6 +70,7 @@ class ItemModel(db.Model):
 
     pricing_models = db.Column('pricing_models', JSONB)
     statistics = db.Column('statistics', JSONB)
+    delivery_method = db.Column('delivery_method', db.Text, index=True)
 
     automated_metadata = db.Column('automated_metadata', JSONB)
 
