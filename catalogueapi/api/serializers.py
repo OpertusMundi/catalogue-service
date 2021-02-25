@@ -92,7 +92,7 @@ properties = api.model('properties of an item', {
     'automated_metadata': fields.Raw(description='Automated metadata of the dataset (JSON)'),
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
-
+    'delivery_method': fields.String(readOnly=True, description='Delivery method of the asset', enum = ["digital_platform", "digital_provider", "physical_provider"]),
     'versions':  fields.List(fields.String(), description='All versions of the resource'),
 })
 
