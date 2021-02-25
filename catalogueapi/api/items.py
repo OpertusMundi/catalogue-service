@@ -584,6 +584,55 @@ class DraftCollection(Resource):
                 }
             }, 404
 
+@ns.route('/harvest/search')
+@api.response(404, 'No items found from this url')
+@api.response(200, 'Items found', page_of_items)
+class HarvestCollection(Resource):
+
+    # @api.marshal_list_with(page_of_items)
+    @api.expect(p.harvest_search_args, validate=False)
+    def get(self):
+        """
+        Searches and returns a list of harvests.
+        """
+        args = p.harvest_search_args.parse_args(request)
+
+        harvest_url = args.get('harvest_url')
+        page = args.get('page')
+        per_page = args.get('per_page')
+        # Initialize items query
+        harvest = Harvest.query
+
+        # Search by harvest url
+        harvest = harvest.filter(Harvest.harvested_from == harvest_url)
+
+        # Add pagination
+        result = harvest.paginate(page, per_page, error_out=False)
+
+        items_geojson = []
+
+        # Post-process to get item_geojson
+        if result.items:
+            for i in result.items:
+                items_geojson.append(i.item_geojson)
+            result.items = items_geojson
+
+            return {
+                'result': marshal(result, page_of_items),
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Harvested items found'
+                }
+            }, 200
+        else:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'No harvested items found from this url'
+                }
+            }, 404
 
 @ns.route('/harvest')
 @api.response(400, 'Error harvesting')
