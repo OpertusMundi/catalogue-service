@@ -27,7 +27,7 @@ The application is configured using environment variables:
  * `FLASK_DEBUG`: a `True/False` flag (should be `False` in a production environment!)
 
 For convenience, these variables can be kept in an enviroment-like file, say `config-development.py` or `config-testing.py`. 
-Look at the example at `config-development.py.example`.  
+Look at the example at `config.py.example`.  
 
 ## 3. Run
 
@@ -35,7 +35,7 @@ Run a development server (environment variables must be set in current shell):
 
     ./wsgi.py
  
-If environment variables are kept in a seperate file, say `development.env`, run by pointing to that file:
+If environment variables are kept in a seperate file, say `config-development.py`, run by pointing to that file:
 
     env FILE_CONFIG=config-development.py ./wsgi.py
 
@@ -45,7 +45,7 @@ To run with Docker we must prepare a `docker-compose` recipe.
 
 Copy `.env.example` into `.env`. Edit as needed.
 
-The additional environment variables here (i.e. not described in section [2](#2-configure)):
+The additional environment variables here (i.e. not described in [section 2](#2-configure)):
 
   * `FLASK_ENV`: One of `production` or `development`
   * `VERSION`: The semantic version of the application (used to tag the Docker image)
@@ -68,4 +68,17 @@ Run:
 
 The API documentation is using the `OpenAPI` standard.
 You can brownse the documentation [here](https://opertusmundi.github.io/catalogue-service/).
+
+## 6. Test
+
+Install the additionaly required packages for testing ('nose' etc.):
+
+    pip install -r requirements-testing.txt
+
+Prepare a environment file, say `config-testing.py`, analogous to the one used for running the application (start by copying the example `config.py.example`).
+
+Run nose tests:
+
+    env FILE_CONFIG=config-testing.py nosetests 
+
 
