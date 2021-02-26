@@ -117,7 +117,6 @@ def _from_csw(url):
     stop = 0
     flag = 0
     maxrecords = 5
-    totalrecords = 20
 
     while stop == 0:
         if flag == 0:  # first run, start from 0
@@ -129,8 +128,7 @@ def _from_csw(url):
 
         if src.results['nextrecord'] == 0 \
             or src.results['returned'] == 0 \
-            or src.results['nextrecord'] > src.results['matches'] \
-            or len(result) >= totalrecords:  # end the loop, exhausted all records
+            or src.results['nextrecord'] > src.results['matches']: # end the loop, exhausted all records
             stop = 1
             break
         

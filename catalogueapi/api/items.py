@@ -307,6 +307,79 @@ class ItemUnit(Resource):
             }
         }, 200
 
+@ns.route('/harvest/<string:id>')
+class HarvestUnit(Resource):
+
+    @api.response(200, 'Harvested item found.', item_geojson)
+    def get(self, id):
+        """
+        Returns a harvested item
+        """
+
+        try:
+            result = Harvest.query.filter(Harvest.id == id).one()
+        except NoResultFound:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Harvested item not found.'
+                }
+            }, 404
+        return {
+            'result': result.item_geojson,
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Harvested item found'
+            }
+        }, 200
+
+    @api.expect(item_geojson)
+    @api.response(200, 'Harvested item successfully updated.')
+    def put(self, id):
+        """
+        Updates a harvested item.
+        Use this method to change a property of an item.
+        * Send a geojson object with the new values in the request body.
+        ```
+        {
+         "properties": {
+            "title": "New item title"
+          }
+        }
+        ```
+        * Specify the ID of the item to modify in the request URL path.
+        """
+        data = request.json
+        harvest = Harvest.query.filter(Harvest.id == id).one()
+        actions.update_harvested_item(harvest, data)
+        return 'Item successfully updated.', 200
+
+    @api.response(200, 'Harvested item successfully deleted.')
+    @api.response(404, 'Harvested item not found.')
+    def delete(self, id):
+        """
+        Deletes a item.
+        """
+        try:
+            actions.delete_harvested_item(id)
+        except:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Harvested item not found'
+                }
+            }, 404
+        return {
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Harvested item successfully deleted.'
+            }
+        }, 200
+
 @ns.route('/history/get')
 class ItemUnit(Resource):
     @api.response(404, 'Version was not found.')

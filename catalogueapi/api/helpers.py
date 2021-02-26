@@ -19,7 +19,8 @@ def convert_from_iso(md):
 
     for t in md.identification.topiccategory:
         item['properties']['keywords'].append({'keyword': t , 'theme': '' })
-    item['properties']['license']= md.identification.uselimitation[0]
+    if md.identification.uselimitation:
+        item['properties']['license']= md.identification.uselimitation[0]
     date_start = md.identification.temporalextent_start
     date_end = md.identification.temporalextent_end
     if date_start:
@@ -36,7 +37,6 @@ def convert_from_iso(md):
                                                 [float(bbox.maxx), float(bbox.miny)],
                                                 [float(bbox.minx), float(bbox.miny)]]]
     if md.contact:
-        log.debug('MD CONTACT %s - %s', md.contact[0].name, md.contact[0].email)
         if md.contact[0].email:
             item['properties']['metadata_point_of_contact_email'] = md.contact[0].email
         if md.contact[0].name:
