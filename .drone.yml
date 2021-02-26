@@ -21,7 +21,6 @@ steps:
   when:
     event:
     - push
-    - tag
   environment:
     POSTGRES_PASSWORD:
       from_secret: postgres_password
@@ -106,6 +105,9 @@ steps:
 services:
 - name: postgis-1
   image: postgis/postgis:10-3.0-alpine
+  when:
+    event:
+    - push
   environment:
     POSTGRES_PASSWORD:
       from_secret: postgres_password
