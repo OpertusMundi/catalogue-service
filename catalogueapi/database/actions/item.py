@@ -1,16 +1,31 @@
-
 import uuid
 import logging
 import json
-import pkgutil
+import jsonschema
+import os
 from datetime import datetime
-from jsonschema import validate
+import catalogueapi.resources
 from catalogueapi.database import db
 from catalogueapi.database.model.item import Item, Draft, History, Harvest
 
 log = logging.getLogger(__name__)
-session = db.session
 
+# Initialize JSON-Schema validator
+
+_schema = None
+_resources_dir = catalogueapi.resources.base_dir()
+with open(os.path.join(_resources_dir, 'record.json')) as f:
+    _schema = json.load(f)
+
+_validator = jsonschema.Draft7Validator(_schema, 
+    resolver=jsonschema.RefResolver('file://' + _resources_dir, _schema));
+
+def validate_input(data):
+    return _validator.validate(data)
+
+# Actions
+
+session = db.session
 
 def create_item(data):
     item = Item()
@@ -159,11 +174,5 @@ def update_status(id, status):
         session.add(draft)
     session.commit()
     log.info('Updated item %s with status %s', id, status)
-
-
-def validate_input(data):
-
-    schema = pkgutil.get_data('catalogueapi', "resources/record.json")
-    validate(instance=data, schema=json.loads(schema))
 
 

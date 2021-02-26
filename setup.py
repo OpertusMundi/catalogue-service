@@ -15,6 +15,9 @@ setup(
     keywords='rest restful api flask swagger openapi flask-restx',
     packages=find_packages(exclude=('tests*',)),
     include_package_data=True,
+    package_data={'catalogueapi': [
+        'resources/*.json',
+    ]},
     install_requires=['flask-restx==0.2', 'Flask-SQLAlchemy==2.4.1'],
     zip_safe=False,
 )
