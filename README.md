@@ -1,4 +1,6 @@
-# catalogue-service
+# Catalogue Service
+
+[![Build Status](https://ci.dev-1.opertusmundi.eu:9443/api/badges/OpertusMundi/catalogue-service/status.svg?ref=refs/heads/master)](https://ci.dev-1.opertusmundi.eu:9443/OpertusMundi/catalogue-service)
 
 A catalogue service with CRUD operations.
 
