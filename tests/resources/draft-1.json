@@ -1,0 +1,95 @@
+{
+  "id": "bdb87e25-4ac9-4a1e-85be-df4dced3d286",
+  "type": "Feature",
+  "geometry":  {
+    "type": "Polygon",
+    "coordinates": [
+      [[13.4197998046875, 52.52624809700062],
+      [13.387527465820312, 52.53084314728766],
+      [13.366928100585938, 52.50535544522142],
+      [13.419113159179688, 52.501175722709434],
+      [13.4197998046875, 52.52624809700062]]
+    ]
+  },
+  "properties": {
+    "title": "Ηydrographic network",
+    "abstract": "This dataset contains the hydrographic network of Greece",
+    "type": "raster",
+    "spatial_data_service_type": "TMS",
+    "format": "shapefile",
+    "keywords": [
+      {
+        "keyword": "keyword1",
+        "theme": "theme1"
+      },
+      {
+        "keyword": "keyword2",
+        "theme": "theme2"
+      }
+    ],
+    "publisher_name": "Ministry of Reconstruction of Production, Environment and Energy",
+    "publisher_email": "info@geodata.gov.gr",
+    "publisher_id": "string",
+    "language": "string",
+    "date_start": "2021-02-03",
+    "date_end": "2021-02-03",
+    "creation_date": "2021-02-03",
+    "publication_date": "2021-02-03",
+    "revision_date": "2021-02-03",
+    "resource_locator": "string",
+    "license": "string",
+    "topic_category": [
+      "Biota"
+    ],
+    "scales": [{
+        "scale": 3425,
+        "description": "string"
+      }
+    ],
+    "reference_system": "string",
+    "spatial_resolution": 25523,
+    "conformity": "conformant",
+    "additional_resources": [
+      {
+        "id": "string",
+        "type": "string",
+        "value": "string",
+        "name": "string"
+      }
+    ],
+    "public_access_limitations": "string",
+    "metadata_language": "string",
+    "metadata_point_of_contact_name": "string",
+    "metadata_point_of_contact_email": "string",
+    "metadata_date": "2021-02-03",
+    "resources": [
+      {
+        "id": "string",
+        "category": "string",
+        "value": "string",
+        "format": "string"
+      }
+    ],
+    "lineage": "string",
+    "parent_id": "string",
+    "suitable_for": [
+      "string"
+    ],
+    "pricing_models": [
+      {"model1 key1": "value1-1",
+	"medel1 key2": "value1-2"},
+	{"model2 key1": "value2-1",
+	"model2 key2": "value2-2"}
+
+    ],
+    "automated_metadata": {
+        "metadata1": "value",
+	"metadata2": "value2"
+    },
+    "statistics": {
+	"statistics1": "value",
+	"statistics2": "value2"
+    },
+    "delivery_method": "digital_platform"
+  }
+}
