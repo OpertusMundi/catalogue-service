@@ -66,41 +66,43 @@ steps:
     event:
     - tag
   commands:
-  - echo ${DRONE_TAG} >> .tags
-  - echo ${DRONE_TAG} | grep -o -e '^[0-9]\+[.][0-9]\+[.][0-9]\+' >> .tags
+  - tags_file=$(mktemp) 
+  - echo ${DRONE_TAG} >> $${tags_file}
+  - echo ${DRONE_TAG} | grep -o -e '^[0-9]\+[.][0-9]\+[.][0-9]\+' >> $${tags_file}
+  - cat $${tags_file} | xargs echo | tr '[:blank:]' ',' | tr -d '\n' | tee .tags && echo
 
-- name: publish-image-1
-  image: plugins/docker
-  when:
-    event:
-    - tag
-  settings:
-    debug: true
-    username: 
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
-    repo: opertusmundi/catalogueapi
-    mirror: http://registry-mirror:5000
-    build_args:
-    - VERSION=${DRONE_TAG}
-
-- name: publish-image-2
-  image: plugins/docker
-  when:
-    event:
-    - tag
-  settings:
-    debug: true
-    username: 
-      from_secret: registry_username
-    password:
-      from_secret: registry_password
-    repo: registry-dev-1-opertusmundi:30474/opertusmundi/catalogueapi
-    mirror: http://registry-mirror:5000
-    registry: registry-dev-1-opertusmundi:30474
-    build_args:
-    - VERSION=${DRONE_TAG}
+#- name: publish-image-1
+#  image: plugins/docker
+#  when:
+#    event:
+#    - tag
+#  settings:
+#    debug: true
+#    username: 
+#      from_secret: docker_username
+#    password:
+#      from_secret: docker_password
+#    repo: opertusmundi/catalogueapi
+#    mirror: http://registry-mirror:5000
+#    build_args:
+#    - VERSION=${DRONE_TAG}
+#
+#- name: publish-image-2
+#  image: plugins/docker
+#  when:
+#    event:
+#    - tag
+#  settings:
+#    debug: true
+#    username: 
+#      from_secret: registry_username
+#    password:
+#      from_secret: registry_password
+#    repo: registry-dev-1-opertusmundi:30474/opertusmundi/catalogueapi
+#    mirror: http://registry-mirror:5000
+#    registry: registry-dev-1-opertusmundi:30474
+#    build_args:
+#    - VERSION=${DRONE_TAG}
 
 
 #
