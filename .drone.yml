@@ -60,6 +60,15 @@ steps:
   # Run tests
   - env FILE_CONFIG=config-testing.py nosetests -v -s
 
+- name: prepare-tags
+  image: busybox:1.32
+  when:
+    event:
+    - tag
+  commands:
+  - echo ${DRONE_TAG} >> .tags
+  - echo ${DRONE_TAG} | grep -o -e '^[0-9]\+[.][0-9]\+[.][0-9]\+' >> .tags
+
 - name: publish-image-1
   image: plugins/docker
   when:
@@ -73,8 +82,6 @@ steps:
       from_secret: docker_password
     repo: opertusmundi/catalogueapi
     mirror: http://registry-mirror:5000
-    tags:
-    - ${DRONE_TAG}
     build_args:
     - VERSION=${DRONE_TAG}
 
@@ -92,8 +99,6 @@ steps:
     repo: registry-dev-1-opertusmundi:30474/opertusmundi/catalogueapi
     mirror: http://registry-mirror:5000
     registry: registry-dev-1-opertusmundi:30474
-    tags:
-    - ${DRONE_TAG}
     build_args:
     - VERSION=${DRONE_TAG}
 
