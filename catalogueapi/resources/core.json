@@ -208,21 +208,7 @@
       "description": "Provides a list of resources of the dataset",
       "type": "array",
       "items":{
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string"
-          },
-          "value": {
-            "type": "string"
-          },
-          "format": {
-            "type": "string"
-          }
-        }
+        "type": "object"
       }
     },
     "lineage": {
