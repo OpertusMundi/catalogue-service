@@ -32,7 +32,7 @@
     "use_only_for_vas": {
       "title": "Use only for vas",
       "description": "Used for vector or raster items.",
-      "type": "object"
+      "type": "boolean"
     },
     "delivery_method": {
       "title": "Delivery method",
