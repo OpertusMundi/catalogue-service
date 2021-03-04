@@ -77,6 +77,9 @@ class ItemModel(db.Model):
     harvested_from = db.Column('harvested_from', db.Text, index=True)
     harvest_json = db.Column('harvest_json', JSONB)
 
+    use_only_for_vas = db.Column('use_only_for_vas', db.Boolean, default=False, index=True)
+    ingestion_info = db.Column('ingestion_info', JSONB)
+
     created_at = db.Column('created_at', db.Date, index=True)
     submitted_at = db.Column('submitted_at', db.Date, index=True)
     accepted_at = db.Column('accepted_at', db.Date, index=True)
@@ -93,7 +96,7 @@ class ItemModel(db.Model):
             geom = data['geometry']
             self.geographic_location = shape(geom).wkt
         for key in properties:
-            if properties[key]:
+            if properties[key] is not None:
                 setattr(self, key, properties[key])
         self.id = id
         item_geojson = self.serialize()

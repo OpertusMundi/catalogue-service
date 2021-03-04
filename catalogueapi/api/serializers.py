@@ -85,6 +85,9 @@ properties = api.model('properties of an item', {
     'metadata_date': fields.Date(description='The date which specifies when the metadata record was created or updated'),
     'metadata_version': fields.String(readOnly=True, description='Version of the metadata record'),
     
+    'use_only_for_vas': fields.Boolean(description='Applicable for vector or raster items'),
+    'ingestion_info': fields.Raw(description='Ingestion information (JSON)'),
+
     'resources':  fields.List(fields.Nested(resources,description='"Provides a list of resources of the dataset')),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
@@ -92,7 +95,7 @@ properties = api.model('properties of an item', {
     'automated_metadata': fields.Raw(description='Automated metadata of the dataset (JSON)'),
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
-    'delivery_method': fields.String(readOnly=True, description='Delivery method of the asset', enum = ["digital_platform", "digital_provider", "physical_provider"]),
+    'delivery_method': fields.String(readOnly=True, description='Delivery method of the asset', enum = ["digital_platform", "digital_provider", "physical_provider", "none"]),
     'versions':  fields.List(fields.String(), description='All versions of the resource'),
 })
 
