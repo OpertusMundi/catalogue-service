@@ -4,6 +4,8 @@ import os
 
 from catalogueapi.app import create_app
 
+resources_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../resources"));
+
 # Setup/Teardown
 
 app = None

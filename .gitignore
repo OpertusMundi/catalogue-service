@@ -1,6 +1,7 @@
 catalogueapi.egg-info/
 build/
 dist/
+temp/
 *.pyc
 __pycache__
 config.py
@@ -16,3 +17,6 @@ config.py
 /docker-compose.yml
 /docker-compose.yml.[1-9]
 /*.env
+
+
+/.pyenv
