@@ -31,6 +31,7 @@ history_search_args.add_argument('per_page', type=int, required=False,
 
 harvest_search_args = reqparse.RequestParser()
 harvest_search_args.add_argument('harvest_url', type=str, required=True, default="", help='Harvest url')
+harvest_search_args.add_argument('q', type=str, required=False, default="", help='Search query')
 harvest_search_args.add_argument('page', type=int, required=False, default=1, help='Page number')
 harvest_search_args.add_argument('per_page', type=int, required=False,
                                   default=5, help='Results per page }')

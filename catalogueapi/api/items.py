@@ -15,6 +15,7 @@ from catalogueapi.api.helpers import convert_from_iso
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import or_
 
 from owslib.iso import *
 
@@ -36,6 +37,7 @@ class ItemCollection(Resource):
         # validate input first
         try:
             actions.validate_input(data)
+            id = actions.create_draft(data)
         except Exception as ex:
             return {
                 'success': True,
@@ -45,7 +47,6 @@ class ItemCollection(Resource):
                 }
             }, 400
 
-        id = actions.create_draft(data)
 
         return {
             'success': True,
@@ -671,10 +672,14 @@ class HarvestCollection(Resource):
         args = p.harvest_search_args.parse_args(request)
 
         harvest_url = args.get('harvest_url')
+        q = args.get('q')
         page = args.get('page')
         per_page = args.get('per_page')
         # Initialize items query
         harvest = Harvest.query
+
+        # Search by query in title and abstract
+        harvest = harvest.filter(or_(Harvest.title.contains(q),Harvest.abstract.contains(q)) )
 
         # Search by harvest url
         harvest = harvest.filter(Harvest.harvested_from == harvest_url)
