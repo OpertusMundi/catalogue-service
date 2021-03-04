@@ -101,7 +101,7 @@ item_geojson = api.model('the item in geojson format',{
     'id': fields.String(readOnly=True, description='An unambiguous reference to the resource within a given context'),
     'type': fields.String(description='The type of the geojson', default='Feature'),
     'geometry': fields.Nested(polygon, description='The spatial extent of the resource, the spatial \
-                    applicability of the resource, or the jurisdiction under which the resource is relevant.'),
+                    applicability of the resource, or the jurisdiction under which the resource is relevant.', allow_null=True),
     'properties':fields.Nested(properties, description='The properties of the geojson.',required=True)
 })
 
