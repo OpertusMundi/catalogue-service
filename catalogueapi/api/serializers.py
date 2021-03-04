@@ -32,14 +32,6 @@ additional_resources = api.model('additional_resources', {
         'name': fields.String()
 } )
 
-resources = api.model('resources', { 
-        'id': fields.String(),
-        'category': fields.String(),
-        'value': fields.String(),
-        'format': fields.String()
-} )
-
-
 properties = api.model('properties of an item', {
     'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
@@ -88,7 +80,7 @@ properties = api.model('properties of an item', {
     'use_only_for_vas': fields.Boolean(description='Applicable for vector or raster items'),
     'ingestion_info': fields.Raw(description='Ingestion information (JSON)'),
 
-    'resources':  fields.List(fields.Nested(resources,description='"Provides a list of resources of the dataset')),
+    'resources':  fields.List(fields.Raw(description='"Provides a list of resources of the dataset')),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
