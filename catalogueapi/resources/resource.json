@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Opertus Mundi Metadata Elements for Resources",
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "Resource Identifier",
+      "description": "Resource Identifier.",
+      "type": "string"
+    },
+    "filename": {
+      "title": "Resource Filename",
+      "description": "Resource Filename",
+      "type": "string"
+    },
+    "size": {
+      "title": "Resource file size",
+      "description": "Resource file size",
+      "type": "integer"
+    },
+    "format": {
+      "title": "Resource Format",
+      "description": "The file format of the resource",
+      "type": "string"
+    },
+    "modified_on": {
+      "title": "Resource Modification Date-Time",
+      "description": "Resource Modification Date-Time",
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
