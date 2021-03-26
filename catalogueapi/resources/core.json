@@ -25,6 +25,27 @@
       "type": "string",
       "enum": ["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]
     },
+    "spatial_data_service_version": {
+      "title": "Service Version",
+      "description": "The version of the implemented service specification",
+      "type": "string"
+    },
+    "spatial_data_service_operations": {
+      "title": "Service Operations",
+      "description": "The operations supported by the service",
+      "type": "array",
+      "items":{
+        "type": "string"
+      }
+    },
+    "spatial_data_service_queryables": {
+      "title": "Service Queryables",
+      "description": "The queryables supported by the service",
+      "type": "array",
+      "items":{
+        "type": "string"
+      }
+    },
     "format": {
       "title": "Resource Format",
       "description": " The file format, physical medium, or dimensions of the resource",
@@ -43,6 +64,52 @@
           "theme": {
             "type": "string"
           }
+        }
+      }
+    },
+    "responsible_party": {
+      "title": "Resource Responsible Party",
+      "description": "The responsible party (including contact information) of the resource",
+      "type": "array",
+      "items":{
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "description": "Name of person responsible for making the resource available",
+            "type": "string"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "description": "Name of entity responsible for making the resource available",
+            "type": "string"
+          },
+          "email": {
+            "title": "Contact Email",
+            "description": "Email of entity responsible for making the resource available",
+            "type": "string"
+          },
+          "phone": {
+            "title": "Contact Phone",
+            "description": "Phone of entity responsible for making the resource available",
+            "type": "string"
+          },
+          "address": {
+            "title": "Contact Address",
+            "description": "Email of entity responsible for making the resource available",
+            "type": "string"
+          },
+          "service_hours": {
+            "title": "Contact Hours of Service",
+            "description": "Email of entity responsible for making the resource available",
+            "type": "string"
+          },
+          "role": {
+            "title": "Responsible Party Role",
+            "description": "Role of entity responsible for making the resource available",
+            "type": "string",
+            "enum": ["publisher", "owner", "custodian", "user", "distributor", "originator", "point of contact", "processor", "author"]
+          },
         }
       }
     },
