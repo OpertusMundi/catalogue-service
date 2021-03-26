@@ -28,6 +28,93 @@
       "description": "Resource Modification Date-Time",
       "type": "string",
       "format": "date-time"
+    },
+    "style": {
+      "title": "Resource Style",
+      "description": "The style of the resource",
+      "type": "string"
+    },
+    "crs": {
+      "title": "Resource CRS",
+      "description": "The supported CRS of the resource",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "bbox": {
+      "title": "Resource Bounding Box",
+      "description": "The bounding box of the resource",
+      "type": "object"
+    },
+    "dimension": {
+      "title": "Resource Dimentions",
+      "description": "The dimensions of the resource (derived from WMS)",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_formats": {
+      "title": "Resource Output Formats",
+      "description": "The output formats of the resource (derived from WMS/WFS/WCS)",
+      "type": "array",
+      "items":{
+        "type": "string"
+      }
+    },
+    "filter_capabilities": {
+      "title": "Resource Filter Capabilities",
+      "description": "The filter capabilities of the resource",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "attribution": {
+      "title": "Resource Attribution",
+      "description": "The attribution of the resource",
+      "type": "string"
+    },
+    "min_scale": {
+      "title": "Resource Minimum Scale Denominator",
+      "description": "Resource Minimum Scale Denominator",
+      "type": "integer"
+    },
+    "max_scale": {
+      "title": "Resource Maximum Scale Denominator",
+      "description": "Resource Maximum Scale Denominator",
+      "type": "integer"
+    },
+    "attributes": {
+      "title": "Resource Attributes",
+      "description": "Resource Attributes",
+      "type": "object",
+      "properties": {
+        "queryable": {
+          "type": "boolean"
+        },
+        "cascaded": {
+          "type": "boolean"
+        },
+        "opaque": {
+          "type": "boolean"
+        },
+        "no_subsets": {
+          "type": "boolean"
+        },
+        "fixed_width": {
+          "type": "integer"
+        },
+        "fixed_height": {
+          "type": "integer"
+        }
+      }
+    },
+    "tile_sets": {
+      "title": "Resource Tile Sets",
+      "description": "Resource Tile Sets",
+      "type": "object"
     }
   }
 }
