@@ -96,12 +96,12 @@
           },
           "address": {
             "title": "Contact Address",
-            "description": "Email of entity responsible for making the resource available",
+            "description": "Address of entity responsible for making the resource available",
             "type": "string"
           },
           "service_hours": {
             "title": "Contact Hours of Service",
-            "description": "Email of entity responsible for making the resource available",
+            "description": "Contact Hours of entity responsible for making the resource available",
             "type": "string"
           },
           "role": {
@@ -109,7 +109,7 @@
             "description": "Role of entity responsible for making the resource available",
             "type": "string",
             "enum": ["publisher", "owner", "custodian", "user", "distributor", "originator", "point of contact", "processor", "author"]
-          },
+          }
         }
       }
     },

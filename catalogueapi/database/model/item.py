@@ -24,8 +24,15 @@ class ItemModel(db.Model):
     title = db.Column('title', db.Text, nullable=False, index=True)
     abstract = db.Column('abstract', db.Text, index=True)
     type = db.Column('type', db.Text, index=True)
+
     spatial_data_service_type = db.Column(
         'spatial_data_service_type', db.Text, index=True)
+    spatial_data_service_version = db.Column(
+        'spatial_data_service_version', db.Text, index=True)
+    spatial_data_service_operations = db.Column('spatial_data_service_operations', ARRAY(db.Text), index=True)
+    spatial_data_service_queryables = db.Column('spatial_data_service_queryables', ARRAY(db.Text), index=True)
+
+
     format = db.Column('format', db.Text, index=True)
     keywords = db.Column('keywords', ARRAY(JSONB), index=True)
     publisher_name = db.Column('publisher_name', db.Text, index=True)
@@ -71,6 +78,8 @@ class ItemModel(db.Model):
     pricing_models = db.Column('pricing_models', JSONB)
     statistics = db.Column('statistics', JSONB)
     delivery_method = db.Column('delivery_method', db.Text, index=True)
+
+    responsible_party = db.Column('responsible_party', JSONB)
 
     automated_metadata = db.Column('automated_metadata', JSONB)
 

@@ -32,11 +32,27 @@ additional_resources = api.model('additional_resources', {
         'name': fields.String()
 } )
 
+responsible_party = api.model('responsible_party', { 
+        'name': fields.String(description = 'Name of person responsible for making the resource available'),
+        'organization_name': fields.String(description = 'Name of entity responsible for making the resource available'),
+        'email': fields.String(description = 'Email of entity responsible for making the resource available'),
+        'name': fields.String(description = 'Phone of entity responsible for making the resource available'),
+        'phone': fields.String(description = 'Email of entity responsible for making the resource available'),
+        'address': fields.String(description = 'Address of entity responsible for making the resource available'),
+        'service_hours': fields.String(description = 'Contact hours of entity responsible for making the resource available'),
+        'role': fields.String(description='Role of entity responsible for making the resource available', 
+                enum=['publisher', 'owner', 'custodian', 'user', 'distributor', 'originator', 'point of contact', 'processor', 'author']),
+} )
+
 properties = api.model('properties of an item', {
     'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
     'type': fields.String(description='The nature or genre of the resource', enum = ["raster", "vector", "service"]),
     'spatial_data_service_type': fields.String(description='The nature or genre of the service', enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
+    'spatial_data_service_version': fields.String(description='The version of the implemented service specification'),
+    'spatial_data_service_operations': fields.List(fields.String(description='The operations supported by the service')),
+    'spatial_data_service_queryables': fields.List(fields.String(description='The queryables supported by the service')),
+
     'format': fields.String(description='The file format, physical medium, or dimensions of the resource'),
     'keywords':  fields.List(fields.Nested(keyword,description='The topic of the resource')),
     'publisher_name': fields.String(description='Name of an entity responsible for making the resource available'),
