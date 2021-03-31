@@ -36,7 +36,6 @@ responsible_party = api.model('responsible_party', {
         'name': fields.String(description = 'Name of person responsible for making the resource available'),
         'organization_name': fields.String(description = 'Name of entity responsible for making the resource available'),
         'email': fields.String(description = 'Email of entity responsible for making the resource available'),
-        'name': fields.String(description = 'Phone of entity responsible for making the resource available'),
         'phone': fields.String(description = 'Email of entity responsible for making the resource available'),
         'address': fields.String(description = 'Address of entity responsible for making the resource available'),
         'service_hours': fields.String(description = 'Contact hours of entity responsible for making the resource available'),
@@ -55,6 +54,7 @@ properties = api.model('properties of an item', {
 
     'format': fields.String(description='The file format, physical medium, or dimensions of the resource'),
     'keywords':  fields.List(fields.Nested(keyword,description='The topic of the resource')),
+    'responsible_party':  fields.List(fields.Nested(responsible_party,description='The responsible party (including contact information) of the resource')),
     'publisher_name': fields.String(description='Name of an entity responsible for making the resource available'),
     'publisher_email': fields.String(description='Email of an entity responsible for making the resource available'),
     'publisher_id': fields.String(description='Id of an entity responsible for making the resource available'),
