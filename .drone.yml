@@ -66,9 +66,9 @@ steps:
     event:
     - tag
   commands:
-  - tags_file=$(mktemp) 
-  - echo ${DRONE_TAG} >> $${tags_file}
-  - echo ${DRONE_TAG} | grep -o -e '^[0-9]\+[.][0-9]\+[.][0-9]\+' >> $${tags_file}
+  - tags_file=$(mktemp)
+  - echo ${DRONE_TAG} | grep -P -e '^[0-9]+[.][0-9]+[.][0-9]+([_-][\w\d][-.\w\d]*)?$' >> $${tags_file}
+  - echo ${DRONE_TAG} | grep -Po -e '^[0-9]+[.][0-9]+[.][0-9]+' >> $${tags_file}
   - cat $${tags_file} | xargs echo | tr '[:blank:]' ',' | tr -d '\n' | tee .tags && echo
 
 - name: publish-image-1
