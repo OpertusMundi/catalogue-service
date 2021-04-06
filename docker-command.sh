@@ -16,7 +16,11 @@ if [ -z "${SQLALCHEMY_DATABASE_URI}" ]; then
 fi
 
 database_server=$(echo ${SQLALCHEMY_DATABASE_URI} | \
-    grep -Po -e '^postgresql[:][/][/]([\w][\w\d-]*[:][^@]+)[@]\K([\w][\w\d-]*)[:]([\d]{2,4})(?=[/])')
+    grep -Po -e '^postgresql[:][/][/]([\w][\w\d-]*[:][^@]+)[@]\K([\w][\w\d-]*([.][\w][\w\d-]*)*)[:]([\d]{2,4})(?=[/])' || echo -n)
+if [ -z "${database_server}" ]; then
+    echo "The database URL (SQLALCHEMY_DATABASE_URI) is malformed!" 1>&2 
+    exit 1;
+fi
 
 if [ ! -f "${SECRET_KEY_FILE}" ]; then
     echo "SECRET_KEY_FILE does not exist!" 1>&2
