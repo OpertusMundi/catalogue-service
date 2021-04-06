@@ -30,9 +30,13 @@
       "format": "date-time"
     },
     "style": {
-      "title": "Resource Style",
-      "description": "The style of the resource",
-      "type": "string"
+      "title": "Resource Styles",
+      "description": "A list of URLs pointing to the available styles of the resource",
+      "type": "array",
+      "items":{
+        "type": "string",
+        "format": "uri"
+      }
     },
     "crs": {
       "title": "Resource CRS",
@@ -52,7 +56,24 @@
       "description": "The dimensions of the resource (derived from WMS)",
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "default": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items":{
+              "type": "string"
+            }
+          }
+        }
       }
     },
     "output_formats": {
