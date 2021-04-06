@@ -42,7 +42,10 @@
     "ingestion_info": {
       "title": "Ingestion info",
       "description": "Ingestion information",
-      "type": "object"
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
     }
   }
 }
