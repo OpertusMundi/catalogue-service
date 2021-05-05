@@ -50,7 +50,7 @@ dimension = api.model('dimension', {
         'values': fields.List(fields.String()),
 })
 
-resource = api.model('additional_resources', { 
+resource = api.model('resource', { 
         'id': fields.String(),
         'parent_id': fields.String(),
         'filename': fields.String(),
