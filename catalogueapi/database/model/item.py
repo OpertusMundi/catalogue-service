@@ -50,6 +50,7 @@ class ItemModel(db.Model):
 
     resource_locator = db.Column('resource_locator', db.Text, index=True)
     license = db.Column('license', db.Text, index=True)
+    open_dataset = db.Column('open_dataset', db.Boolean, default=False, index=True)
     topic_category = db.Column('topic_category', ARRAY(db.Text), index=True)
 
     reference_system = db.Column('reference_system', db.Text, index=True)

@@ -281,7 +281,7 @@
       "description": "Provides a list of resources of the dataset",
       "type": "array",
       "items":{
-        "type": "object"
+        "$ref": "file:./resource.json"
       }
     },
     "lineage": {

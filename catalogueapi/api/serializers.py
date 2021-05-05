@@ -29,7 +29,49 @@ additional_resources = api.model('additional_resources', {
         'id': fields.String(),
         'type': fields.String(),
         'value': fields.String(),
-        'name': fields.String()
+        'name': fields.String(),
+        'size': fields.String(),
+        'modified_on': fields.Date()
+} )
+
+attributes = api.model('attributes', {
+        'queryable': fields.Boolean(),
+        'cascaded': fields.Boolean(),
+        'opaque': fields.Boolean(),
+        'no_subsets': fields.Boolean(),
+        'fixed_width': fields.Integer(),
+        'fixed_height': fields.Integer(),
+})
+
+dimension = api.model('dimension', {
+        'name': fields.String(),
+        'unit': fields.String(),
+        'default': fields.String(),
+        'values': fields.List(fields.String()),
+})
+
+resource = api.model('additional_resources', { 
+        'id': fields.String(),
+        'parent_id': fields.String(),
+        'filename': fields.String(),
+        'endpoint': fields.String(),
+        'size': fields.Integer(),
+        'type': fields.String(enum=['FILE', 'SERVICE']),
+        'category': fields.String(enum=['VECTOR', 'RASTER', 'NETCDF']),
+        'service_type': fields.String(enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
+        'format': fields.String(),
+        'modified_on': fields.Date(),
+        'style': fields.List(fields.String()),
+        'crs': fields.List(fields.String()),
+        'bbox': fields.Raw(),
+        'dimension':  fields.List(fields.Nested(dimension)),
+        'output_formats': fields.List(fields.String()),
+        'filter_capabilities': fields.List(fields.String()),
+        'attribution': fields.String(),
+        'min_scale': fields.Integer(),
+        'max_scale': fields.Integer(),
+        'attributes': fields.Nested(attributes)
+
 } )
 
 responsible_party = api.model('responsible_party', { 
@@ -73,6 +115,7 @@ properties = api.model('properties of an item', {
     'resource_locator': fields.String(description='The ‘navigation section’ of a metadata record which point users to the location (URL) \
                     where the data can be downloaded, or to where additional information about the resource may be provided'),
     'license': fields.String(description='Information about resource licensing'),
+    'open_dataset': fields.Boolean(description='Used for declaring open datasets.'),
     'topic_category': fields.List(fields.String(description='A high-level classification scheme to assist in the grouping and topic-based \
                     search of available spatial data resources', enum=["Biota", "Boundaries", "Climatology / Meteorology / Atmosphere", "Economy", "Elevation", "Environment", 
                     "Farming", "Geoscientific Information", "Health", "Imagery / Base Maps / Earth Cover", "Inland Waters", "Intelligence / Military", "Location", "Oceans", 
@@ -96,7 +139,7 @@ properties = api.model('properties of an item', {
     'use_only_for_vas': fields.Boolean(description='Applicable for vector or raster items'),
     'ingestion_info': fields.List(fields.Raw(description='Ingestion information (JSON)')),
 
-    'resources':  fields.List(fields.Raw(description='"Provides a list of resources of the dataset')),
+    'resources':  fields.List(fields.Nested(resource,description='Provides a list of resources of the dataset.')),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
