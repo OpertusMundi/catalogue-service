@@ -34,6 +34,11 @@
       "description": "Used for vector or raster items.",
       "type": "boolean"
     },
+    "open_dataset": {
+      "title": "Open Dataset",
+      "description": "Used for declaring open datasets.",
+      "type": "boolean"
+    },
     "delivery_method": {
       "title": "Delivery method",
       "description": "Delivery method of the item: digital platform - digital provider - physical provider",

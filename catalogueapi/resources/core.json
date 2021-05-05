@@ -234,6 +234,12 @@
           },
           "name": {
             "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "modified_on": {
+            "type": "string"
           }
         }
       }

@@ -8,15 +8,43 @@
       "description": "Resource Identifier.",
       "type": "string"
     },
+    "parent_id": {
+      "title": "Resource Parent Identifier",
+      "description": "Resource Parent Identifier.",
+      "type": "string"
+    },
     "filename": {
       "title": "Resource Filename",
       "description": "Resource Filename",
+      "type": "string"
+    },
+    "endpoint": {
+      "title": "Resource Endpoint",
+      "description": "The Resource Endpoint",
       "type": "string"
     },
     "size": {
       "title": "Resource file size",
       "description": "Resource file size",
       "type": "integer"
+    },
+    "type": {
+      "title": "Resource type",
+      "description": "Resource type",
+      "type": "string",
+      "enum": ["FILE", "SERVICE"]
+    },
+    "category": {
+      "title": "Resource category",
+      "description": "Resource category",
+      "type": "string",
+      "enum": ["VECTOR", "RASTER", "NETCDF"]
+    },
+    "service_type": {
+      "title": "Service Type",
+      "description": "The nature or genre of the service",
+      "type": "string",
+      "enum": ["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]
     },
     "format": {
       "title": "Resource Format",
