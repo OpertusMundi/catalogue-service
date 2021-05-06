@@ -30,7 +30,7 @@ additional_resources = api.model('additional_resources', {
         'type': fields.String(),
         'value': fields.String(),
         'name': fields.String(),
-        'size': fields.String(),
+        'size': fields.Integer(),
         'modified_on': fields.Date()
 } )
 
