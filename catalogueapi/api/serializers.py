@@ -22,7 +22,7 @@ keyword = api.model('keyword', {
 
 scale = api.model('scale', { 
         'scale': fields.Integer(description='scale value'),
-        'theme': fields.String(description='a short description')
+        'description': fields.String(description='a short description')
 } )
 
 additional_resources = api.model('additional_resources', { 
@@ -31,7 +31,7 @@ additional_resources = api.model('additional_resources', {
         'value': fields.String(),
         'name': fields.String(),
         'size': fields.Integer(),
-        'modified_on': fields.Date()
+        'modified_on': fields.DateTime()
 } )
 
 attributes = api.model('attributes', {
@@ -60,7 +60,7 @@ resource = api.model('resource', {
         'category': fields.String(enum=['VECTOR', 'RASTER', 'NETCDF']),
         'service_type': fields.String(enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
         'format': fields.String(),
-        'modified_on': fields.Date(),
+        'modified_on': fields.DateTime(),
         'style': fields.List(fields.String()),
         'crs': fields.List(fields.String()),
         'bbox': fields.Raw(),
@@ -103,13 +103,13 @@ properties = api.model('properties of an item', {
     'language': fields.String(description='A language of the resource'),
     'status': fields.String(readonly = True, description='The status of the item'),
 
-    'date_start': fields.Date(description='The temporal extent of the resource (start date)'),
-    'date_end': fields.Date(description='The temporal extent of the resource (end date))'),
-    'creation_date': fields.Date(description='A point or period of time associated with the creation event \
+    'date_start': fields.DateTime(description='The temporal extent of the resource (start date)'),
+    'date_end': fields.DateTime(description='The temporal extent of the resource (end date))'),
+    'creation_date': fields.DateTime(description='A point or period of time associated with the creation event \
                     in the lifecycle of the resource'),
-    'publication_date': fields.Date(description='A point or period of time associated with the publication event \
+    'publication_date': fields.DateTime(description='A point or period of time associated with the publication event \
                     in the lifecycle of the resource'),
-    'revision_date': fields.Date(description='A point or period of time associated with the revision event  \
+    'revision_date': fields.DateTime(description='A point or period of time associated with the revision event  \
                     in the lifecycle of the resource '),
 
     'resource_locator': fields.String(description='The ‘navigation section’ of a metadata record which point users to the location (URL) \
@@ -133,7 +133,7 @@ properties = api.model('properties of an item', {
                      and maintenance of the metadata'),
     'metadata_point_of_contact_email': fields.String(description='The email of the organisation responsible for the creation \
                      and maintenance of the metadata'),
-    'metadata_date': fields.Date(description='The date which specifies when the metadata record was created or updated'),
+    'metadata_date': fields.DateTime(description='The date which specifies when the metadata record was created or updated'),
     'metadata_version': fields.String(readOnly=True, description='Version of the metadata record'),
     
     'use_only_for_vas': fields.Boolean(description='Applicable for vector or raster items'),
