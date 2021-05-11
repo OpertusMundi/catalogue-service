@@ -164,27 +164,31 @@
       "title": "Resource Tile Sets",
       "description": "Resource Tile Sets",
       "type": "object",
-      "properties": {
-        "identifier": {
-          "type": "string"
-        },
-        "min_tile_row": {
-          "type": "integer"
-        },
-        "max_tile_row": {
-          "type": "integer"
-        },
-        "min_tile_col": {
-          "type": "integer"
-        },
-        "max_tile_col": {
-          "type": "integer"
-        },
-        "tile_height": {
-          "type": "integer"
-        },
-        "tile_width": {
-          "type": "integer"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "min_tile_row": {
+            "type": "integer"
+          },
+          "max_tile_row": {
+            "type": "integer"
+          },
+          "min_tile_col": {
+            "type": "integer"
+          },
+          "max_tile_col": {
+            "type": "integer"
+          },
+          "tile_height": {
+            "type": "integer"
+          },
+          "tile_width": {
+            "type": "integer"
+          }
         }
       }
     }
