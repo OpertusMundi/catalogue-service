@@ -239,7 +239,8 @@
             "type": "integer"
           },
           "modified_on": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
