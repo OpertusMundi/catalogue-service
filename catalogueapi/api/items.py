@@ -593,6 +593,43 @@ class ItemCollection(Resource):
                 }
             }, 404
 
+@ns.route('/published/related_items/<string:id>')
+@api.response(404, 'No related items found for this id')
+@api.response(200, 'Related items found')
+class ItemCollection(Resource):
+    def get(self, id):
+        """
+        Returns a list of items (parent and siblings)
+        """
+        
+        try:
+            item = Item.query.filter(Item.id == id).one()
+            result = []
+
+            parent_id = item.parent_id
+            parent = Item.query.filter(Item.id == parent_id).one()
+            result.append(parent.item_geojson)
+
+            siblings = Item.query.filter(Item.parent_id == parent_id).all()
+            for s in siblings:
+                result.append(s.item_geojson)
+
+        except NoResultFound:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'No related items found for this id '
+                }
+            }, 404
+        return {
+            'result': result,
+            'success': True,
+            'message': {
+                'code': 200,
+                'description': 'Related items found'
+            }
+        }, 200
 
 
 
