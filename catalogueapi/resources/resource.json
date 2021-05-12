@@ -163,7 +163,6 @@
     "tile_sets": {
       "title": "Resource Tile Sets",
       "description": "Resource Tile Sets",
-      "type": "object",
       "type": "array",
       "items": {
         "type": "object",
