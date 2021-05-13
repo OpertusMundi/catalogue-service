@@ -599,37 +599,51 @@ class ItemCollection(Resource):
 class ItemCollection(Resource):
     def get(self, id):
         """
-        Returns a list of items (parent and siblings)
+        Returns a list of items (parent, siblings and children excluding self)
         """
         
+        item = Item.query.filter(Item.id == id).one()
+        parent_id = item.parent_id
+        result = []
         try:
-            item = Item.query.filter(Item.id == id).one()
-            result = []
+            children = Item.query.filter(Item.parent_id == id).all()
+            for c in children:
+                if c.id != id:
+                    result.append(c.item_geojson)
+        except:
+            pass
+        if parent_id:
+            try:
+                siblings = Item.query.filter(Item.parent_id == parent_id).all()
+                for s in siblings:
+                    if s.id != id:
+                        result.append(s.item_geojson)
+            except NoResultFound:
+                pass
+            try:
+                parent = Item.query.filter(Item.id == parent_id).one()
+                result.append(parent.item_geojson)
+            except NoResultFound:
+                pass
 
-            parent_id = item.parent_id
-            parent = Item.query.filter(Item.id == parent_id).one()
-            result.append(parent.item_geojson)
-
-            siblings = Item.query.filter(Item.parent_id == parent_id).all()
-            for s in siblings:
-                result.append(s.item_geojson)
-
-        except NoResultFound:
+        if result:
+            return {
+                'result': result,
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Related items found'
+                }
+            }, 200
+        else:
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'No related items found for this id '
+                    'description': 'No related items found for this id'
                 }
             }, 404
-        return {
-            'result': result,
-            'success': True,
-            'message': {
-                'code': 200,
-                'description': 'Related items found'
-            }
-        }, 200
+        
 
 
 
