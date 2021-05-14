@@ -34,10 +34,9 @@ def create_app(config_file=None):
     api.add_namespace(item_namespace)
     app.register_blueprint(api_blueprint)
     
-    # Initialize database
+    # Register SQLAlchemy extension with this Flask application
 
     db.init_app(app)
-    with app.app_context():
-        db.create_all()
-    
+
     return app
+

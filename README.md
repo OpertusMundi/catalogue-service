@@ -13,7 +13,6 @@ Install requirements and package:
     pip install -r requirements.txt
     python setup.py install
 
-
 ## 2. Configure
 
 The application is configured using environment variables:
@@ -31,12 +30,16 @@ The application is configured using environment variables:
 For convenience, these variables can be kept in an enviroment-like file, say `config-development.py` or `config-testing.py`. 
 Look at the example at `config.py.example`.  
 
+To initialize the database schema (this only needs `SQLALCHEMY_DATABASE_URI` variable to be set):
+
+    python -c 'import catalogueapi; catalogueapi.generate_db_schema()'
+
 ## 3. Run
 
 Run a development server (environment variables must be set in current shell):
 
     ./wsgi.py
- 
+
 If environment variables are kept in a seperate file, say `config-development.py`, run by pointing to that file:
 
     env FILE_CONFIG=config-development.py ./wsgi.py
@@ -61,7 +64,11 @@ For example, you can create a private network named `opertusmundi_network`:
 Build the image:
 
     docker-compose build
-   
+
+Initialize database (if not initialized before):
+
+    docker-compose run --rm catalogueapi python -c 'import catalogueapi; catalogueapi.generate_db_schema()'
+
 Run:
 
     docker-compose up -d
