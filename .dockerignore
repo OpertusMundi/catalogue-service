@@ -10,6 +10,7 @@ secrets
 data
 README.md
 .env
+.pyenv
 docker-compose.yml*
 compose.yml
 compose-testing.yml
