@@ -1,6 +1,7 @@
 #!/bin/bash
-#set -x
-set -e
+set -u -e -o pipefail
+
+[[ "${DEBUG:-f}" != "f" || "${XTRACE:-f}" != "f" ]] && set -x
 
 # Check environment
 
@@ -32,8 +33,11 @@ if [ ! -f "${LOGGING_FILE_CONFIG}" ]; then
     exit 1
 fi
 
+logging_file_config=${LOGGING_FILE_CONFIG}
 if [ -n "${LOGGING_ROOT_LEVEL}" ]; then
-    sed -i -e "/^\[logger_root\]/,/^\[.*/ { s/^level=.*/level=${LOGGING_ROOT_LEVEL}/ }" ${LOGGING_FILE_CONFIG}    
+    logging_file_config="logging-$(echo ${HOSTNAME}| md5sum| head -c10).conf"
+    sed -e "/^\[logger_root\]/,/^\[.*/ { s/^level=.*/level=${LOGGING_ROOT_LEVEL}/ }" ${LOGGING_FILE_CONFIG} \
+        > ${logging_file_config}
 fi
 
 export FLASK_APP="catalogueapi"
@@ -45,7 +49,7 @@ wait-for-it -t '30' "${database_server}"
 
 if [ "${FLASK_ENV}" == "development" ]; then
     # Run a development server
-    exec /usr/local/bin/wsgi.py
+    LOGGING_FILE_CONFIG=${logging_file_config} exec /usr/local/bin/wsgi.py
 else
     # Run a production server (Gunicorn)
     num_workers="4"
@@ -55,7 +59,7 @@ else
         gunicorn_ssl_options="--keyfile ${TLS_KEY} --certfile ${TLS_CERTIFICATE}"
         server_port="5443"
     fi
-    exec gunicorn --log-config ${LOGGING_FILE_CONFIG} --access-logfile - \
+    exec gunicorn --log-config ${logging_file_config} --access-logfile - \
       --workers ${num_workers} \
       --bind "0.0.0.0:${server_port}" ${gunicorn_ssl_options} \
       'catalogueapi.app:create_app()'

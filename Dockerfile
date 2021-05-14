@@ -14,15 +14,20 @@ RUN addgroup flask && \
 RUN pip3 install --upgrade pip
 
 RUN mkdir /usr/local/catalogueapi
-COPY setup.py requirements.txt requirements-production.txt /usr/local/catalogueapi/
-RUN cd /usr/local/catalogueapi && pip3 install -r requirements.txt -r requirements-production.txt
-COPY catalogueapi /usr/local/catalogueapi/catalogueapi
-RUN cd /usr/local/catalogueapi && python setup.py install
+
+WORKDIR /usr/local/catalogueapi
+
+COPY setup.py requirements.txt requirements-production.txt ./
+RUN pip3 install --no-cache-dir -r requirements.txt -r requirements-production.txt
+
+COPY catalogueapi ./catalogueapi
+RUN python setup.py install && python setup.py clean -a
 
 COPY docker-command.sh wsgi.py /usr/local/bin/
 RUN chmod a+x /usr/local/bin/docker-command.sh /usr/local/bin/wsgi.py
 
 WORKDIR /var/local/catalogueapi
+
 RUN mkdir ./logs && chown flask:flask ./logs
 COPY --chown=flask logging.conf .
 
