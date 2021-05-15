@@ -32,7 +32,7 @@ Look at the example at `config.py.example`.
 
 To initialize the database schema (this only needs `SQLALCHEMY_DATABASE_URI` variable to be set):
 
-    python -c 'import catalogueapi; catalogueapi.generate_db_schema()'
+    ./generate-db-schema.py    
 
 ## 3. Run
 
@@ -85,6 +85,10 @@ Install the additionaly required packages for testing ('nose' etc.):
     pip install -r requirements-testing.txt
 
 Prepare a environment file, say `config-testing.py`, analogous to the one used for running the application (start by copying the example `config.py.example`).
+
+Generate database schema for testing database (if not already):
+
+    env FILE_CONFIG=config-testing.py ./generate-db-schema.py
 
 Run nose tests:
 

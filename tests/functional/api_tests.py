@@ -36,6 +36,12 @@ def test_get_documentation_1():
         r = res.get_json();
         assert not (r.get('swagger') is None)
 
+def test_draft_search_1():
+    with app.test_client() as client:
+        res = client.get('/api/draft/search', query_string=dict())
+        print("test_draft_search_1: res=%r" % (res))
+        assert res.status_code in [200, 404]
+
 def test_draft_create_1():
     with app.test_client() as client:
         req_data = None

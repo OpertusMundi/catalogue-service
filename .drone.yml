@@ -57,6 +57,8 @@ steps:
   - db_password=$(cat .postgres-test-password) 
   - db_url=$(echo "postgresql://$${DB_USER}:$${db_password}@$${POSTGRES_HOST}:$${POSTGRES_PORT}/$${DB_NAME}")
   - echo "SQLALCHEMY_DATABASE_URI='$${db_url}'" >> config-testing.py
+  # Generate DDL schema in database
+  - env FILE_CONFIG=config-testing.py ./generate-db-schema.py 
   # Run tests
   - env FILE_CONFIG=config-testing.py nosetests -v -s
 
