@@ -54,6 +54,7 @@ The additional environment variables here (i.e. not described in [section 2](#2-
 
   * `FLASK_ENV`: One of `production` or `development`
   * `VERSION`: The semantic version of the application (used to tag the Docker image)
+  * `DATABASE_INITIALIZE_SCHEMA`: If `True`, will initialize database schema before starting the WSGI server
 
 Copy `docker-compose.yml.example` into `docker-compose.yml`. Edit as needed. You will at least need to configure the network (inside `docker-compose.yml`) to attach to. 
 
@@ -65,7 +66,7 @@ Build the image:
 
     docker-compose build
 
-Initialize database (if not initialized before):
+Initialize database schema (if not initialized before):
 
     docker-compose run --rm catalogueapi python -c 'import catalogueapi; catalogueapi.generate_db_schema()'
 

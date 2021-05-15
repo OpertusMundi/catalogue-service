@@ -1,13 +1,15 @@
 #!/bin/bash
 set -u -e -o pipefail
 
-[[ "${DEBUG:-f}" != "f" || "${XTRACE:-f}" != "f" ]] && set -x
+[[ "${DEBUG:-False}" == "True" || "${XTRACE:-False}" == "True" ]] && set -x
 
+#
 # Check environment
+#
 
 python_version="$(python3 -c 'import platform; print(platform.python_version())' | cut -d '.' -f 1,2)" 
 if [ "${python_version}" != "${PYTHON_VERSION}" ]; then
-    echo "PYTHON_VERSION (${PYTHON_VERSION}) different with version reported from python3 executable (${python_version})" 1>&2
+    echo "PYTHON_VERSION (${PYTHON_VERSION}) differs from version reported from python3 executable (${python_version})" 1>&2
     exit 1
 fi
 
@@ -16,8 +18,8 @@ if [ -z "${SQLALCHEMY_DATABASE_URI}" ]; then
     exit 1
 fi
 
-database_server=$(echo ${SQLALCHEMY_DATABASE_URI} | \
-    grep -Po -e '^postgresql[:][/][/]([\w][\w\d-]*[:][^@]+)[@]\K([\w][\w\d-]*([.][\w][\w\d-]*)*)[:]([\d]{2,4})(?=[/])' || echo -n)
+database_server_pattern='^postgresql[:][/][/]([\w][\w\d-]*[:][^@]+)[@]\K([\w][\w\d-]*([.][\w][\w\d-]*)*)[:]([\d]{2,4})(?=[/])'
+database_server=$(echo ${SQLALCHEMY_DATABASE_URI} | grep -Po -e "${database_server_pattern}" || echo -n)
 if [ -z "${database_server}" ]; then
     echo "The database URL (SQLALCHEMY_DATABASE_URI) is malformed!" 1>&2 
     exit 1;
@@ -43,9 +45,20 @@ fi
 export FLASK_APP="catalogueapi"
 export SECRET_KEY="$(cat ${SECRET_KEY_FILE})"
 
-# Start WSGI server
+#
+# Initialize database schema (if requested so)
+#
 
 wait-for-it -t '30' "${database_server}"
+
+if [ "${DATABASE_INITIALIZE_SCHEMA:-False}" == "True" ]; then
+    echo "Generating database schema..." 1>&2
+    python -c 'import catalogueapi; catalogueapi.generate_db_schema()'
+fi
+
+#
+# Start WSGI server
+#
 
 if [ "${FLASK_ENV}" == "development" ]; then
     # Run a development server
