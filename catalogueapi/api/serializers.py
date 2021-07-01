@@ -144,6 +144,10 @@ properties = api.model('properties of an item', {
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
     'automated_metadata': fields.List(fields.Raw(description='Automated metadata of the dataset (JSON)')),
+
+    'contract_template_id': fields.String(description='The id of the template contract'),
+    'contract_template_version': fields.String(description='The version of the template contract'),
+
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
     'delivery_method': fields.String(readOnly=True, description='Delivery method of the asset', enum = ["digital_platform", "digital_provider", "physical_provider", "none"]),

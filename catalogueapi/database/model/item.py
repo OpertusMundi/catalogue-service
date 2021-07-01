@@ -76,6 +76,9 @@ class ItemModel(db.Model):
 
     item_geojson = db.Column('item_geojson', JSONB)
 
+    contract_template_id = db.Column('contract_template_id', db.Text, index=True)
+    contract_template_version = db.Column('contract_template_version', db.Text, index=True)
+
     pricing_models = db.Column('pricing_models', JSONB)
     statistics = db.Column('statistics', JSONB)
     delivery_method = db.Column('delivery_method', db.Text, index=True)
