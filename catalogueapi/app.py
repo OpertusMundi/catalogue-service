@@ -26,6 +26,7 @@ def create_app(config_file=None):
         app.config['RESTX_MASK_SWAGGER'] = os.environ.get("RESTX_MASK_SWAGGER", False) 
         app.config['ERROR_404_HELP'] = os.environ.get("ERROR_404_HELP", False)
         app.config['FLASK_DEBUG'] = os.environ.get("FLASK_DEBUG", False)
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
        
     # Register blueprints
 
