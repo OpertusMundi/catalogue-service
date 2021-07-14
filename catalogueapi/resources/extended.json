@@ -51,6 +51,22 @@
       "items": {
         "type": "object"
       }
+    },
+    "automated_metadata": {
+      "title": "Automated metadata",
+      "description": "Automated metadata",
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "visibility": {
+      "title": "Visibility",
+      "description": "Visibility control for automated metadata",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   }
 }
