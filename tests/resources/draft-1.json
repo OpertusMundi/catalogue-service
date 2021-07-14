@@ -80,12 +80,12 @@
 	"medel1 key2": "value1-2"},
 	{"model2 key1": "value2-1",
 	"model2 key2": "value2-2"}
-
     ],
     "automated_metadata": [{
     "metadata1": "value",
 	"metadata2": "value2"
     }],
+    "visibility": ["value1","value2"],
     "statistics": {
 	"statistics1": "value",
 	"statistics2": "value2"
