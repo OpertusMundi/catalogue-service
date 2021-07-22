@@ -144,6 +144,7 @@ properties = api.model('properties of an item', {
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
     'automated_metadata': fields.List(fields.Raw(description='Automated metadata of the dataset (JSON)')),
+    'visibility': fields.List(fields.String(), description='Hidden automated metadata properties'),
 
     'contract_template_id': fields.Integer(description='The id of the template contract'),
     'contract_template_version': fields.String(description='The version of the template contract'),
