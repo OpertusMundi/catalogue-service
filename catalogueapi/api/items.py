@@ -61,14 +61,25 @@ class ItemCollection(Resource):
 class Status(Resource):
     @api.expect(p.update_status_args, validate=False)
     @api.response(200, 'Status successfully updated.')
+    @api.response(400, 'Error updating status.')
+    @api.response(404, 'Draft not found.')
     def put(self):
         """
         Updates a draft's status.
         """
         id = p.update_status_args.parse_args(request).get('id')
         status = p.update_status_args.parse_args(request).get('status')
+        log.info('Updating status of draft ' + id)
         try:
             actions.update_status(id, status)
+        except NoResultFound:
+            return{
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Draft {} not found.'.format(id)
+                }
+            }, 404
         except Exception as ex:
             return{
                 'success': False,

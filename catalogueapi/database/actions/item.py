@@ -142,7 +142,7 @@ def delete_harvested_item(id):
 
 
 def update_status(id, status):
-    draft = session.query(Draft).get(id)
+    draft = Draft.query.filter(Draft.id == id).one()
     data = draft.item_geojson
     if status == 'published':
         data['properties']['publication_date'] = datetime.now()
