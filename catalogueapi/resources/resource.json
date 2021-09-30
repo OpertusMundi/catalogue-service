@@ -38,7 +38,7 @@
       "title": "Resource category",
       "description": "Resource category",
       "type": "string",
-      "enum": ["VECTOR", "RASTER", "NETCDF"]
+      "enum": ["VECTOR", "RASTER", "NETCDF", "TABULAR"]
     },
     "service_type": {
       "title": "Service Type",
