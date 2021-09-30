@@ -17,7 +17,7 @@
       "title": "Resource Type",
       "description": "The nature or genre of the resource",
       "type": "string",
-      "enum": ["raster", "vector", "service"]
+      "enum": ["raster", "vector", "service", "tabular"]
     },
     "spatial_data_service_type": {
       "title": "Service Type",
