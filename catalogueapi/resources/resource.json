@@ -51,6 +51,11 @@
       "description": "The file format of the resource",
       "type": "string"
     },
+    "encoding": {
+      "title": "Resource Encoding",
+      "description": "The file encoding of the resource",
+      "type": "string"
+    },
     "modified_on": {
       "title": "Resource Modification Date-Time",
       "description": "Resource Modification Date-Time",
