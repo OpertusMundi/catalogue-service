@@ -32,13 +32,13 @@
       "title": "Resource type",
       "description": "Resource type",
       "type": "string",
-      "enum": ["FILE", "SERVICE"]
+      "enum": ["FILE", "SERVICE", "ASSET"]
     },
     "category": {
       "title": "Resource category",
       "description": "Resource category",
       "type": "string",
-      "enum": ["VECTOR", "RASTER", "NETCDF", "TABULAR"]
+      "enum": ["VECTOR", "RASTER", "NETCDF", "TABULAR", "BUNDLE"]
     },
     "service_type": {
       "title": "Service Type",
