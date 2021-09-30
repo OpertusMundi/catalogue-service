@@ -294,6 +294,11 @@
       "title": "Resource Parent Identifier",
       "description": "Provides the identifier of a parent resource",
       "type": "string"
+    },
+    "parent_data_source_id": {
+      "title": "Resource Parent Data Source Identifier",
+      "description": "Provides the identifier of a parent data source resource",
+      "type": "string"
     }
   }
 }
