@@ -60,6 +60,7 @@ resource = api.model('resource', {
         'category': fields.String(enum=['VECTOR', 'RASTER', 'NETCDF', 'TABULAR', 'BUNDLE']),
         'service_type': fields.String(enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
         'format': fields.String(),
+        'encoding': fields.String(),
         'modified_on': fields.DateTime(),
         'style': fields.List(fields.String()),
         'crs': fields.List(fields.String()),
