@@ -40,7 +40,7 @@ class ItemCollection(Resource):
             id = actions.create_draft(data)
         except Exception as ex:
             return {
-                'success': True,
+                'success': False,
                 'message': {
                     'code': 400,
                     'description': str(ex)
@@ -118,9 +118,9 @@ class ItemUnit(Resource):
                 }
             }, 404
 
-        # include previous versions
+        # include previous versions (sorted from newest to latest version)
         try:
-            history = History.query.filter(History.id == id)
+            history = History.query.filter(History.id == id).order_by((History.metadata_version).desc())
         except Exception as ex:
             return {
                 'success': False,
