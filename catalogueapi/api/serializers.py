@@ -57,7 +57,7 @@ resource = api.model('resource', {
         'endpoint': fields.String(),
         'size': fields.Integer(),
         'type': fields.String(enum=['FILE', 'SERVICE']),
-        'category': fields.String(enum=['VECTOR', 'RASTER', 'NETCDF']),
+        'category': fields.String(enum=['VECTOR', 'RASTER', 'NETCDF', 'TABULAR', 'BUNDLE']),
         'service_type': fields.String(enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
         'format': fields.String(),
         'modified_on': fields.DateTime(),
@@ -88,7 +88,7 @@ responsible_party = api.model('responsible_party', {
 properties = api.model('properties of an item', {
     'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
-    'type': fields.String(description='The nature or genre of the resource', enum = ["raster", "vector", "service"]),
+    'type': fields.String(description='The nature or genre of the resource', enum = ["raster", "vector", "service", "tabular", "bundle"]),
     'spatial_data_service_type': fields.String(description='The nature or genre of the service', enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
     'spatial_data_service_version': fields.String(description='The version of the implemented service specification'),
     'spatial_data_service_operations': fields.List(fields.String(description='The operations supported by the service')),
