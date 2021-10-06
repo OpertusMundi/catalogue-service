@@ -143,6 +143,7 @@ properties = api.model('properties of an item', {
     'resources':  fields.List(fields.Nested(resource,description='Provides a list of resources of the dataset.')),
     'lineage': fields.String(description='General explanation of the data producer’s knowledge about the lineage of a dataset'),
     'parent_id': fields.String(description='Provides the ID of a parent dataset.'),
+    'parent_data_source_id': fields.String(description='Provides the ID of the parent data source.'),
     'suitable_for': fields.List(fields.String(description='A description of geospatial analysis or processing that the dataset is suitable for')),
     'automated_metadata': fields.List(fields.Raw(description='Automated metadata of the dataset (JSON)')),
     'visibility': fields.List(fields.String(), description='Hidden automated metadata properties'),

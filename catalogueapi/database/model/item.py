@@ -6,7 +6,7 @@ from geoalchemy2.types import Geometry
 
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.types import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY
 from shapely.geometry import shape, mapping
 from geoalchemy2.shape import to_shape
 import shapely.wkt
@@ -73,6 +73,7 @@ class ItemModel(db.Model):
     resources = db.Column('resources', ARRAY(JSONB), index=True)
     lineage = db.Column('lineage', db.Text, index=True)
     parent_id = db.Column('parent_id', db.Text, index=True)
+    parent_data_source_id = db.Column('parent_data_source_id', db.Text, index=True)
 
     item_geojson = db.Column('item_geojson', JSONB)
 
