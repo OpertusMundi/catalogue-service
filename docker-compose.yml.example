@@ -3,7 +3,7 @@
 version: "3.6"
 
 services:
-  catalogueapi:
+  'catalogueapi':
     image: "opertusmundi/catalogueapi:${VERSION}"
     build:
       context: .
@@ -41,6 +41,35 @@ services:
     - opertusmundi_network
     ports:
       - 5000:5000
+
+  # This is not a service, but an one-off command. Run like:
+  # docker-compose run --rm flyway migrate
+  'flyway':
+    image: 'flyway/flyway:7.7'
+    #command: ['info']
+    volumes:
+    - type: 'bind'
+      # A file (readable by gid 101) containing the sensitive part of Flyway configuration, e.g.:
+      #   flyway.user=someone
+      #   flyway.password=s3cret
+      source: ./secrets/flyway-secret.conf
+      target: /flyway/conf/secret.conf
+      read_only: true
+    - type: 'bind'
+      source: ./catalogueapi/resources/db/migration/
+      target: /flyway/sql
+      read_only: true
+    environment:
+      FLYWAY_CONFIG_FILES: /flyway/conf/secret.conf
+      FLYWAY_URL: ${FLYWAY_URL}
+      FLYWAY_SCHEMAS: public
+      FLYWAY_DEFAULT_SCHEMA: public
+      FLYWAY_BASELINE_VERSION: ${FLYWAY_BASELINE_VERSION}
+      FLYWAY_TABLE: ${FLYWAY_TABLE}
+      FLYWAY_BASELINE_ON_MIGRATE: 'true'
+    networks:
+    - opertusmundi_network
+
 
 networks:
   opertusmundi_network: {external: true}
