@@ -34,7 +34,7 @@ class ItemModel(db.Model):
 
 
     format = db.Column('format', db.Text, index=True)
-    keywords = db.Column('keywords', ARRAY(JSONB), index=True)
+    keywords = db.Column('keywords', ARRAY(JSONB))
     publisher_name = db.Column('publisher_name', db.Text, index=True)
     publisher_email = db.Column('publisher_email', db.Text, index=True)
     publisher_id = db.Column('publisher_id', db.Text, index=True)
@@ -50,16 +50,16 @@ class ItemModel(db.Model):
 
     resource_locator = db.Column('resource_locator', db.Text, index=True)
     license = db.Column('license', db.Text, index=True)
-    open_dataset = db.Column('open_dataset', db.Boolean, default=False, index=True)
+    open_dataset = db.Column('open_dataset', db.Boolean, default=False)
     topic_category = db.Column('topic_category', ARRAY(db.Text), index=True)
 
     reference_system = db.Column('reference_system', db.Text, index=True)
     spatial_resolution = db.Column('spatial_resolution', db.Integer, index=True)
-    scales = db.Column('scale', ARRAY(JSONB), index=True)
+    scales = db.Column('scale', ARRAY(JSONB))
     version = db.Column('version', db.Text, index=True)
     conformity = db.Column('conformity', db.Text, index=True)
     additional_resources = db.Column(
-        'additional_resources', ARRAY(JSONB), index=True)
+        'additional_resources', ARRAY(JSONB))
     public_access_limitations = db.Column(
         'public_access_limitations', db.Text, index=True)
 
@@ -70,7 +70,7 @@ class ItemModel(db.Model):
         'metadata_point_of_contact_email', db.Text, index=True)
     metadata_date = db.Column('metadata_date', db.Date, index=True)
     metadata_version = db.Column('metadata_version', db.Text, index=True)
-    resources = db.Column('resources', ARRAY(JSONB), index=True)
+    resources = db.Column('resources', ARRAY(JSONB))
     lineage = db.Column('lineage', db.Text, index=True)
     parent_id = db.Column('parent_id', db.Text, index=True)
     parent_data_source_id = db.Column('parent_data_source_id', db.Text, index=True)
@@ -91,7 +91,7 @@ class ItemModel(db.Model):
     harvested_from = db.Column('harvested_from', db.Text, index=True)
     harvest_json = db.Column('harvest_json', JSONB)
 
-    use_only_for_vas = db.Column('use_only_for_vas', db.Boolean, default=False, index=True)
+    use_only_for_vas = db.Column('use_only_for_vas', db.Boolean, default=False)
     ingestion_info = db.Column('ingestion_info', ARRAY(JSONB))
 
     created_at = db.Column('created_at', db.Date, index=True)
@@ -153,13 +153,6 @@ class ItemModel(db.Model):
 class Item(ItemModel):
     __tablename__ = "item"
 
-    __table_args__ = (
-        db.Index(
-            'item_index',
-            ItemModel.ts_vector,
-            postgresql_using='gin'
-        ),
-    )
 
 
 class Draft(ItemModel):
@@ -168,13 +161,6 @@ class Draft(ItemModel):
     status = db.Column(
         'status', db.Enum('draft', 'review', 'accepted', 'embargo', name="status"), index=True)
 
-    __table_args__ = (
-        db.Index(
-            'draft_index',
-            ItemModel.ts_vector,
-            postgresql_using='gin'
-        ),
-    )
 
 
 class History(ItemModel):
@@ -183,25 +169,12 @@ class History(ItemModel):
     version_id = db.Column('version_id', db.Integer,
                            primary_key=True, autoincrement=True)
 
-    deleted = db.Column('deleted', db.Boolean, index=True)
+    deleted = db.Column('deleted', db.Boolean)
 
     deleted_at = db.Column('deleted_at', db.Date, index=True)
 
-    __table_args__ = (
-        db.Index(
-            'history_index',
-            ItemModel.ts_vector,
-            postgresql_using='gin'
-        ),
-    )
+
 
 class Harvest(ItemModel):
     __tablename__ = "harvest"
 
-    __table_args__ = (
-        db.Index(
-            'harvested_index',
-            ItemModel.ts_vector,
-            postgresql_using='gin'
-        ),
-    )
