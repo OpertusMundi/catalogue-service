@@ -2,7 +2,7 @@ import requests
 import logging
 import json
 
-from flask import request
+from flask import request, current_app
 from flask_restx import Resource
 from flask_restx import marshal
 import catalogueapi.database.actions.item as actions
@@ -19,10 +19,7 @@ from sqlalchemy import or_
 
 from owslib.iso import *
 
-log = logging.getLogger(__name__)
-
 ns = api.namespace('', description='Operations related to items')
-
 
 @ns.route('/draft/create')
 class ItemCollection(Resource):
@@ -69,7 +66,7 @@ class Status(Resource):
         """
         id = p.update_status_args.parse_args(request).get('id')
         status = p.update_status_args.parse_args(request).get('status')
-        log.info('Updating status of draft ' + id)
+        current_app.logger.info('Updating status of draft ' + id)
         try:
             actions.update_status(id, status)
         except NoResultFound:
@@ -529,6 +526,7 @@ class DraftCollection(Resource):
         status = args.get('status')
         page = args.get('page')
         per_page = args.get('per_page')
+
         # Initialize items query
         drafts = Draft.query
 
@@ -785,7 +783,7 @@ class HarvestCollection(Resource):
         """
         url = p.harvest_args.parse_args(request).get('url')
         harvester = p.harvest_args.parse_args(request).get('harvester')
-        log.info('Harvesting from: ' + url)
+        current_app.logger.info('Harvesting from: ' + url)
         try:
             total = harvest(url, harvester)
         except Exception as ex:

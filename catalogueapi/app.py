@@ -2,13 +2,16 @@ import os
 import os.path
 from flask import Flask, Blueprint
 
+APP_NAME = os.environ.get('FLASK_APP')
+
 def create_app(config_file=None):
     
     from .api.items import ns as item_namespace
     from .api.restx import api
     from .database import db
+    from .logging import Rfc5424MdcContextFilter
     
-    app = Flask(__name__)
+    app = Flask(APP_NAME)
     
     # Configure app
 
@@ -27,7 +30,11 @@ def create_app(config_file=None):
         app.config['ERROR_404_HELP'] = os.environ.get("ERROR_404_HELP", False)
         app.config['FLASK_DEBUG'] = os.environ.get("FLASK_DEBUG", False)
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
-       
+    
+    # Add logging filters 
+
+    app.logger.addFilter(Rfc5424MdcContextFilter())
+
     # Register blueprints
 
     api_blueprint = Blueprint('api', __name__, url_prefix='/api')

@@ -31,7 +31,8 @@ WORKDIR /var/local/catalogueapi
 RUN mkdir ./logs && chown flask:flask ./logs
 COPY --chown=flask logging.conf .
 
-ENV FLASK_ENV="production" \
+ENV FLASK_APP="catalogueapi" \
+    FLASK_ENV="production" \
     FLASK_DEBUG="false" \
     LOGGING_FILE_CONFIG="./logging.conf" \
     LOGGING_ROOT_LEVEL="" \
