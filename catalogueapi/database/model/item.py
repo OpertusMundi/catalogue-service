@@ -92,6 +92,7 @@ class ItemModel(db.Model):
     harvest_json = db.Column('harvest_json', JSONB)
 
     use_only_for_vas = db.Column('use_only_for_vas', db.Boolean, default=False)
+    vetting_required = db.Column('vetting_required', db.Boolean, default=False)
     ingestion_info = db.Column('ingestion_info', ARRAY(JSONB))
 
     created_at = db.Column('created_at', db.Date, index=True)

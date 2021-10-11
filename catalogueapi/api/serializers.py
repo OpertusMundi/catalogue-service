@@ -138,6 +138,7 @@ properties = api.model('properties of an item', {
     'metadata_version': fields.String(readOnly=True, description='Version of the metadata record'),
     
     'use_only_for_vas': fields.Boolean(description='Applicable for vector or raster items'),
+    'vetting_required': fields.Boolean(description='Used for customer vetting'),
     'ingestion_info': fields.List(fields.Raw(description='Ingestion information (JSON)')),
 
     'resources':  fields.List(fields.Nested(resource,description='Provides a list of resources of the dataset.')),

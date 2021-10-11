@@ -34,6 +34,11 @@
       "description": "Used for vector or raster items.",
       "type": "boolean"
     },
+    "vetting_required": {
+      "title": "Vetting required",
+      "description": "Used for customer vetting.",
+      "type": "boolean"
+    },
     "open_dataset": {
       "title": "Open Dataset",
       "description": "Used for declaring open datasets.",
