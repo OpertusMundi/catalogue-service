@@ -10,7 +10,7 @@ from catalogueapi.database.actions.harvest import harvest
 from catalogueapi.api.serializers import item_geojson, page_of_items
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
-from catalogueapi.database.model.item import Item, Draft, History, Harvest
+from catalogueapi.database.model.item import Asset_in_bundle, Item, Draft, History, Harvest
 from catalogueapi.api.helpers import convert_from_iso
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
@@ -653,6 +653,48 @@ class ItemCollection(Resource):
                 }
             }, 404
         
+
+@ns.route('/published/available_as/<string:id>')
+@api.response(404, 'Asset not found available in any bundles')
+@api.response(200, 'Asset found available in a bundle')
+class ItemCollection(Resource):
+    def get(self, id):
+        """
+        Returns a list of bundles asset is part of
+        """
+        
+        try:
+            bundles = Asset_in_bundle.query.filter(Asset_in_bundle.asset_id == id).all()
+            result = []
+            for b in bundles:
+                item = Item.query.filter(Item.id == b.bundle_id).one()
+                result.append(item.item_geojson)
+        except Exception as ex:
+            return {
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': str(ex)
+                }
+            }, 400
+
+        if result:
+            return {
+                'result': result,
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Asset found available in a bundle'
+                }
+            }, 200
+        else:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'Asset not found available in any bundles'
+                }
+            }, 404
 
 
 

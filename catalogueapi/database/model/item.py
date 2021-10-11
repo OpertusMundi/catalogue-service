@@ -179,3 +179,10 @@ class History(ItemModel):
 class Harvest(ItemModel):
     __tablename__ = "harvest"
 
+
+
+class Asset_in_bundle(db.Model):
+    __tablename__ = 'asset_in_bundle'
+
+    asset_id = db.Column('asset_id', db.Text, nullable=False, primary_key=True, index=True)
+    bundle_id = db.Column('bundle_id', db.Text, nullable=False, primary_key=True, index=True)

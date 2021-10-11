@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 import catalogueapi.resources
 from catalogueapi.database import db
-from catalogueapi.database.model.item import Item, Draft, History, Harvest
+from catalogueapi.database.model.item import Item, Draft, History, Harvest, Asset_in_bundle
 
 log = logging.getLogger(__name__)
 
@@ -73,6 +73,7 @@ def create_draft(data):
     data['properties']['metadata_version'] = '1.0'
     data['properties']['created_at'] = datetime.now()
     id = data['id']
+
     draft.update(id, data)
     session.add(draft)
     session.commit()
@@ -164,6 +165,12 @@ def update_status(id, status):
             item = create_item(data)
         session.add(item)
         session.delete(draft)
+
+        # check if item is a bundle
+        if data['properties']['type'] == 'bundle':
+            for resource in data['properties']['resources']:
+                if resource['type'] == 'ASSET':
+                    session.add(Asset_in_bundle(asset_id = resource['id'], bundle_id = data['id']))
     else:
         if status == 'accepted':
             data['properties']['accepted_at'] = datetime.now()
