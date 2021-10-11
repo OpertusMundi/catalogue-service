@@ -56,7 +56,7 @@ resource = api.model('resource', {
         'filename': fields.String(),
         'endpoint': fields.String(),
         'size': fields.Integer(),
-        'type': fields.String(enum=['FILE', 'SERVICE']),
+        'type': fields.String(enum=['FILE', 'SERVICE', 'ASSET']),
         'category': fields.String(enum=['VECTOR', 'RASTER', 'NETCDF', 'TABULAR', 'BUNDLE', 'SERVICE']),
         'service_type': fields.String(enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
         'format': fields.String(),
