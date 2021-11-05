@@ -62,7 +62,7 @@ resource = api.model('resource', {
         'format': fields.String(),
         'encoding': fields.String(),
         'modified_on': fields.DateTime(),
-        'style': fields.List(fields.String()),
+        'style': fields.List(fields.Raw()),
         'crs': fields.List(fields.String()),
         'bbox': fields.Raw(),
         'dimension':  fields.List(fields.Nested(dimension)),

@@ -66,9 +66,8 @@
       "title": "Resource Styles",
       "description": "A list of URLs pointing to the available styles of the resource",
       "type": "array",
-      "items":{
-        "type": "string",
-        "format": "uri"
+      "items": {
+        "type": "object"
       }
     },
     "crs": {
