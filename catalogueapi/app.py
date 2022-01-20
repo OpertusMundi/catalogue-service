@@ -1,8 +1,9 @@
 import os
 import os.path
 from flask import Flask, Blueprint
+from urllib.parse import urlparse
 
-APP_NAME = os.environ.get('FLASK_APP')
+APP_NAME = os.environ.get('FLASK_APP','catalogueapi')
 
 def create_app(config_file=None):
     
@@ -20,8 +21,15 @@ def create_app(config_file=None):
         app.config.from_pyfile(config_file)
     else:
         # Configure (directly) from environment
+        DATABASE_URL = os.environ['DATABASE_URL']
+        DATABASE_USERNAME = os.environ['DATABASE_USERNAME']
+        DATABASE_PASSWORD_FILE = os.environ['DATABASE_PASSWORD_FILE']
+        with open(DATABASE_PASSWORD_FILE) as f:
+            PASSWORD = f.read().rstrip('\n')
+        parsed_url = urlparse(DATABASE_URL)
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + DATABASE_USERNAME + ':' + PASSWORD + \
+                                                '@' + parsed_url.netloc + parsed_url.path
         app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
         app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME') or None 
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", False) 
         app.config['SWAGGER_UI_DOC_EXPANSION'] = os.environ.get("SWAGGER_UI_DOC_EXPANSION", 'list') 
