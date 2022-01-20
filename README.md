@@ -18,7 +18,9 @@ Install requirements and package:
 The application is configured using environment variables:
   
  * `SECRET_KEY` (optional): a randomly-generated secret used for encryption
- * `SQLALCHEMY_DATABASE_URI`: the SQLAlchemy connection URL for PostGIS (>=`3.0`) backend (`postgresql://username:password@host:port/database`)
+ * `DATABASE_URL`: the connection URL for PostGIS (>=`3.0`) backend (`postgresql://host:port/database`)
+ * `DATABASE_USERNAME`: the username for database connection
+ * `DATABASE_PASSWORD_FILE`: the file containing the password for database connection
  * `SQLALCHEMY_TRACK_MODIFICATIONS`: A `True/False` flag
  * `SERVER_NAME` (optional): the server name (`host:port`) under which the service is accessed.
  * `SWAGGER_UI_DOC_EXPANSION`: one of `none`, `list` or `full`

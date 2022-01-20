@@ -22,9 +22,15 @@ services:
       source: ./data/secret_key
       target: /var/local/catalogueapi/secret_key
       read_only: true
+    - type: 'bind'
+      source: ./secrets/database-password
+      target: /secrets/database-password
+      read_only: true
     environment:
       SERVER_NAME: ${SERVER_NAME}
-      SQLALCHEMY_DATABASE_URI: ${DATABASE_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD_FILE: /secrets/database-password
       SQLALCHEMY_TRACK_MODIFICATIONS: "False"
       DATABASE_INITIALIZE_SCHEMA: "False"
       ERROR_404_HELP: "False"
@@ -46,12 +52,13 @@ services:
   # docker-compose run --rm flyway migrate
   'flyway':
     image: 'flyway/flyway:7.7'
-    #command: ['info']
+    command: ['info']
     volumes:
     - type: 'bind'
       # A file (readable by gid 101) containing the sensitive part of Flyway configuration, e.g.:
-      #   flyway.user=someone
       #   flyway.password=s3cret
+      # Generate with:
+      #   cat secrets/database-password | xargs printf "flyway.password=%s" >secrets/flyway-secret.conf
       source: ./secrets/flyway-secret.conf
       target: /flyway/conf/secret.conf
       read_only: true
@@ -62,6 +69,7 @@ services:
     environment:
       FLYWAY_CONFIG_FILES: /flyway/conf/secret.conf
       FLYWAY_URL: ${FLYWAY_URL}
+      FLYWAY_USER: ${DATABASE_USERNAME}
       FLYWAY_SCHEMAS: public
       FLYWAY_DEFAULT_SCHEMA: public
       FLYWAY_BASELINE_VERSION: ${FLYWAY_BASELINE_VERSION}

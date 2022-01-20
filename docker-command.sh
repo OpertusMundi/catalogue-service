@@ -13,26 +13,30 @@ if [ "${python_version}" != "${PYTHON_VERSION}" ]; then
     exit 1
 fi
 
-if [ -z "${SQLALCHEMY_DATABASE_URI}" ]; then
-    echo "SQLALCHEMY_DATABASE_URI is not specified!" 1>&2
-    exit 1
+if [ -z "${DATABASE_URL}" ]; then
+    echo "DATABASE_URL is not specified!" 1>&2 && exit 1;
 fi
 
-database_server_pattern='^postgresql[:][/][/]([\w][\w\d-]*[:][^@]+)[@]\K([\w][\w\d-]*([.][\w][\w\d-]*)*)[:]([\d]{2,4})(?=[/])'
-database_server=$(echo ${SQLALCHEMY_DATABASE_URI} | grep -Po -e "${database_server_pattern}" || echo -n)
+database_server_pattern='^postgresql[:][/][/]\K([\w][\w\d-]*([.][\w][\w\d-]*)*)[:]([\d]{2,4})(?=[/])'
+database_server=$(echo ${DATABASE_URL} | grep -Po -e "${database_server_pattern}" || echo -n)
 if [ -z "${database_server}" ]; then
-    echo "The database URL (SQLALCHEMY_DATABASE_URI) is malformed!" 1>&2 
-    exit 1;
+    echo "The database URL (DATABASE_URL) is malformed!" 1>&2  && exit 1;
+fi
+
+if [ -z "${DATABASE_USERNAME}" ]; then
+    echo "DATABASE_USERNAME is not specified!" 1>&2 && exit 1;
+fi
+
+if [ ! -f "${DATABASE_PASSWORD_FILE}" ]; then 
+    echo "DATABASE_PASSWORD_FILE is not readable (or not specified)!" 1>&2 && exit 1;
 fi
 
 if [ ! -f "${SECRET_KEY_FILE}" ]; then
-    echo "SECRET_KEY_FILE does not exist!" 1>&2
-    exit 1
+    echo "SECRET_KEY_FILE does not exist!" 1>&2 && exit 1;
 fi
 
 if [ ! -f "${LOGGING_FILE_CONFIG}" ]; then
-    echo "LOGGING_FILE_CONFIG (configuration for Python logging) does not exist!" 1>&2
-    exit 1
+    echo "LOGGING_FILE_CONFIG (configuration for Python logging) does not exist!" 1>&2 && exit 1;
 fi
 
 logging_file_config=${LOGGING_FILE_CONFIG}
