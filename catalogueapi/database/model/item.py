@@ -103,6 +103,8 @@ class ItemModel(db.Model):
 
     suitable_for = db.Column('suitable_for', ARRAY(db.Text), index=True)
 
+    extensions = db.Column('extensions', JSONB)
+
     ts_vector = func.to_tsvector('english', item_geojson)
 
     def update(self, id, data):

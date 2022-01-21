@@ -24,6 +24,11 @@
         "type": "object"
       }
     },
+    "extensions": {
+        "title": "External data provider extensions",
+        "description": "Collection of custom properties required for external data provider integration.",
+        "type": "object"
+      },
     "statistics": {
       "title": "Statistics",
       "description": "Detailed multi-line description to fully explain the Item.",

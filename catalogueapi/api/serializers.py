@@ -15,17 +15,17 @@ polygon = api.model('polygon geometry', {
     )
 })
 
-keyword = api.model('keyword', { 
+keyword = api.model('keyword', {
         'keyword': fields.String(description='keyword value'),
         'theme': fields.String(description='a related theme')
 } )
 
-scale = api.model('scale', { 
+scale = api.model('scale', {
         'scale': fields.Integer(description='scale value'),
         'description': fields.String(description='a short description')
 } )
 
-additional_resources = api.model('additional_resources', { 
+additional_resources = api.model('additional_resources', {
         'id': fields.String(),
         'type': fields.String(),
         'value': fields.String(),
@@ -50,7 +50,7 @@ dimension = api.model('dimension', {
         'values': fields.List(fields.String()),
 })
 
-resource = api.model('resource', { 
+resource = api.model('resource', {
         'id': fields.String(),
         'parent_id': fields.String(),
         'filename': fields.String(),
@@ -75,21 +75,21 @@ resource = api.model('resource', {
 
 } )
 
-responsible_party = api.model('responsible_party', { 
+responsible_party = api.model('responsible_party', {
         'name': fields.String(description = 'Name of person responsible for making the resource available'),
         'organization_name': fields.String(description = 'Name of entity responsible for making the resource available'),
         'email': fields.String(description = 'Email of entity responsible for making the resource available'),
         'phone': fields.String(description = 'Email of entity responsible for making the resource available'),
         'address': fields.String(description = 'Address of entity responsible for making the resource available'),
         'service_hours': fields.String(description = 'Contact hours of entity responsible for making the resource available'),
-        'role': fields.String(description='Role of entity responsible for making the resource available', 
+        'role': fields.String(description='Role of entity responsible for making the resource available',
                 enum=['publisher', 'owner', 'custodian', 'user', 'distributor', 'originator', 'point of contact', 'processor', 'author']),
 } )
 
 properties = api.model('properties of an item', {
     'title': fields.String(description='A name given to the resource', required=True),
     'abstract': fields.String(description='An abstract of the resource'),
-    'type': fields.String(description='The nature or genre of the resource', enum = ["raster", "vector", "service", "tabular", "bundle", "netcdf"]),
+    'type': fields.String(description='The nature or genre of the resource', enum = ["sentinel-hub-open-data", "raster", "vector", "service", "tabular", "bundle", "netcdf"]),
     'spatial_data_service_type': fields.String(description='The nature or genre of the service', enum=["TMS", "WMS", "WFS", "WCS", "CSW", "Data API", "OGC API"]),
     'spatial_data_service_version': fields.String(description='The version of the implemented service specification'),
     'spatial_data_service_operations': fields.List(fields.String(description='The operations supported by the service')),
@@ -118,8 +118,8 @@ properties = api.model('properties of an item', {
     'license': fields.String(description='Information about resource licensing'),
     'open_dataset': fields.Boolean(description='Used for declaring open datasets.'),
     'topic_category': fields.List(fields.String(description='A high-level classification scheme to assist in the grouping and topic-based \
-                    search of available spatial data resources', enum=["Biota", "Boundaries", "Climatology / Meteorology / Atmosphere", "Economy", "Elevation", "Environment", 
-                    "Farming", "Geoscientific Information", "Health", "Imagery / Base Maps / Earth Cover", "Inland Waters", "Intelligence / Military", "Location", "Oceans", 
+                    search of available spatial data resources', enum=["Biota", "Boundaries", "Climatology / Meteorology / Atmosphere", "Economy", "Elevation", "Environment",
+                    "Farming", "Geoscientific Information", "Health", "Imagery / Base Maps / Earth Cover", "Inland Waters", "Intelligence / Military", "Location", "Oceans",
                     "Planning / Cadastre", "Society", "Structure", "Transportation", "Utilities / Communication"])),
     'reference_system': fields.String(description='Information about the reference system'),
     'spatial_resolution': fields.Integer(description='Spatial resolution refers to the level of detail of the data set'),
@@ -136,7 +136,7 @@ properties = api.model('properties of an item', {
                      and maintenance of the metadata'),
     'metadata_date': fields.Date(description='The date which specifies when the metadata record was created or updated'),
     'metadata_version': fields.String(readOnly=True, description='Version of the metadata record'),
-    
+
     'use_only_for_vas': fields.Boolean(description='Applicable for vector or raster items'),
     'vetting_required': fields.Boolean(description='Used for customer vetting'),
     'ingestion_info': fields.List(fields.Raw(description='Ingestion information (JSON)')),
@@ -156,6 +156,8 @@ properties = api.model('properties of an item', {
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
     'delivery_method': fields.String(readOnly=True, description='Delivery method of the asset', enum = ["digital_platform", "digital_provider", "physical_provider", "none"]),
     'versions':  fields.List(fields.String(), description='All versions of the resource'),
+
+    'extensions': fields.Raw(description='Collection of custom properties required for external data provider integration (JSON)'),
 })
 
 
