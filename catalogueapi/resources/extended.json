@@ -70,6 +70,22 @@
         "type": "object"
       }
     },
+    "contract_template_id": {
+      "title": "Contract template id",
+      "description": "Id of the contract template",
+      "type": "integer"
+    },
+    "contract_template_version": {
+      "title": "Contract type",
+      "description": "Version of the contract template",
+      "type": "string"
+    },
+    "contract_template_type": {
+      "title": "Contract type",
+      "description": "Type of the contract template",
+      "type": "string",
+      "enum": ["MASTER_CONTRACT", "UPLOADED_CONTRACT"]
+    },
     "visibility": {
       "title": "Visibility",
       "description": "Visibility control for automated metadata",
