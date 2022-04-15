@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='catalogueapi',
-    version='0.0.4',
+    version='0.0.5',
     description='A RESTful catalogue API based on Flask-RESTX',
     author='Nikiforos Leonidakis',
     python_requires='>=3.8',
