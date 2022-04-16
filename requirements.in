@@ -1,0 +1,11 @@
+# FIXME: This requirements.in file has conflicts (because of Werkzeug==0.16.1)
+flask-restx==0.5.1
+Flask-SQLAlchemy==2.4.1
+Werkzeug==0.16.1
+psycopg2-binary
+shapely
+geoalchemy2
+jsonschema
+requests
+owslib
+Jinja2==3.0.3
