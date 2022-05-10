@@ -84,7 +84,7 @@
       "title": "Contract type",
       "description": "Type of the contract template",
       "type": "string",
-      "enum": ["MASTER_CONTRACT", "UPLOADED_CONTRACT"]
+      "enum": ["MASTER_CONTRACT", "UPLOADED_CONTRACT", "OPEN_DATASET"]
     },
     "visibility": {
       "title": "Visibility",

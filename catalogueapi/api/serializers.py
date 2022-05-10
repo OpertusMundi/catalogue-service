@@ -151,7 +151,7 @@ properties = api.model('properties of an item', {
 
     'contract_template_id': fields.Integer(description='The id of the template contract'),
     'contract_template_version': fields.String(description='The version of the template contract'),
-    'contract_template_type': fields.String(description='The type of the contract', enum=["MASTER_CONTRACT", "UPLOADED_CONTRACT"]),
+    'contract_template_type': fields.String(description='The type of the contract', enum=["MASTER_CONTRACT", "UPLOADED_CONTRACT", "OPEN_DATASET"]),
 
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
