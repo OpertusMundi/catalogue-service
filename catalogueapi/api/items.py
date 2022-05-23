@@ -652,7 +652,38 @@ class ItemCollection(Resource):
                     'description': 'No related items found for this id'
                 }
             }, 404
+
+@ns.route('/published/related_data_source_items/<string:id>')
+@api.response(404, 'No items found for this parent data source id')
+@api.response(200, 'Items found for this parent data source id')
+class ItemCollection(Resource):
+    def get(self, id):
+        """
+        Returns a list of items with the requested parent data source id
+        """
         
+        items = Item.query.filter(Item.parent_data_source_id == id).all()
+        result = []
+
+        if items:
+            for i in items:
+                result.append(i.item_geojson) 
+            return {
+                'result': result,
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Items found for this parent data source id'
+                }
+            }, 200
+        else:
+            return {
+                'success': False,
+                'message': {
+                    'code': 404,
+                    'description': 'No items found for this parent data source id'
+                }
+            }, 404       
 
 @ns.route('/published/available_as/<string:id>')
 @api.response(404, 'Asset not found available in any bundles')
