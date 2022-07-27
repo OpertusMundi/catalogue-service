@@ -162,19 +162,19 @@ class ItemUnit(Resource):
         return 'Item successfully updated.', 200
 
     @api.response(200, 'Item successfully deleted.')
-    @api.response(404, 'Item not found.')
+    @api.response(400, 'Delete failed')
     def delete(self, id):
         """
         Deletes a item.
         """
         try:
             actions.delete_item(id)
-        except:
+        except Exception as ex:
             return {
                 'success': False,
                 'message': {
-                    'code': 404,
-                    'description': 'Item not found'
+                    'code': 400,
+                    'description': 'Delete failed: ' + str(ex)
                 }
             }, 404
         return {
@@ -213,6 +213,14 @@ class ItemUnit(Resource):
                     'description': 'Draft for this published item already exists.'
                 }
             }, 400
+        except Exception as ex:
+            return {
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': 'Draft creation failed: ' + str(ex)
+                }
+            }, 400
         return {
             'success': True,
             'message': {
@@ -248,7 +256,8 @@ class ItemUnit(Resource):
         }, 200
 
     @api.expect(item_geojson)
-    @api.response(404, 'Error updating draft.')
+    @api.response(404, 'Draft not found')
+    @api.response(400, 'Error updating draft.')
     @api.response(200, 'Draft successfully updated.')
     def put(self, id):
         """
@@ -280,8 +289,8 @@ class ItemUnit(Resource):
             return {
                 'success': False,
                 'message': {
-                    'code': 404,
-                    'description': 'Error updating draft.' + str(ex)
+                    'code': 400,
+                    'description': 'Error updating draft: ' + str(ex)
                 }
             }, 400
         return {
@@ -292,7 +301,7 @@ class ItemUnit(Resource):
             }
         }, 200
 
-    @api.response(404, 'Draft not found.')
+    @api.response(400, 'Delete failed')
     @api.response(200, 'Draft successfully deleted.')
     def delete(self, id):
         """
@@ -300,14 +309,14 @@ class ItemUnit(Resource):
         """
         try:
             actions.delete_draft(id)
-        except:
+        except Exception as ex:
             return {
                 'success': False,
                 'message': {
-                    'code': 404,
-                    'description': 'Draft not found'
+                    'code': 400,
+                    'description': 'Delete failed: ' + str(ex)
                 }
-            }, 404
+            }, 400
         return {
             'success': True,
             'message': {
@@ -373,12 +382,12 @@ class HarvestUnit(Resource):
         """
         try:
             actions.delete_harvested_item(id)
-        except:
+        except Exception as ex:
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'Harvested item not found'
+                    'description': 'Delete faled: ' + str(ex)
                 }
             }, 404
         return {
@@ -687,6 +696,7 @@ class ItemCollection(Resource):
 
 @ns.route('/published/available_as/<string:id>')
 @api.response(404, 'Asset not found available in any bundles')
+@api.response(400, 'Error searching for bundles')
 @api.response(200, 'Asset found available in a bundle')
 class ItemCollection(Resource):
     def get(self, id):
@@ -705,7 +715,7 @@ class ItemCollection(Resource):
                 'success': False,
                 'message': {
                     'code': 400,
-                    'description': str(ex)
+                    'description': 'Error searching for bundles: ' + str(ex)
                 }
             }, 400
 
@@ -891,6 +901,7 @@ class ItemCollection(Resource):
 
         try:
             actions.validate_input(converted_data)
+            id = actions.create_draft(converted_data)
         except Exception as ex:
             return {
                 'success': True,
@@ -899,9 +910,6 @@ class ItemCollection(Resource):
                     'description': str(ex)
                 }
             }, 400
-
-        id = actions.create_draft(converted_data)
-
         return {
             'success': True,
             'message': {
@@ -914,6 +922,7 @@ class ItemCollection(Resource):
 @ns.route('/draft/create_from_harvest/<string:id>')
 class ItemUnit(Resource):
     @api.response(404, 'Published item not found.')
+    @api.response(400, 'Draft creation failed')
     @api.response(200, 'Draft successfully created.')
     def post(self, id):
         """
@@ -937,6 +946,14 @@ class ItemUnit(Resource):
                 'message': {
                     'code': 400,
                     'description': 'Draft for this harvested item already exists.'
+                }
+            }, 400
+        except Exception as ex:
+            return {
+                'success': False,
+                'message': {
+                    'code': 400,
+                    'description': 'Draft creation failed: ' + str(ex)
                 }
             }, 400
         return {

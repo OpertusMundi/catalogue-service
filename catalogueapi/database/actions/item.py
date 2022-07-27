@@ -52,6 +52,8 @@ def update_item(item, data):
 
 def delete_item(id):
     item = session.query(Item).get(id)
+    if not item:
+        raise Exception('Item not found')
     data = item.item_geojson
     # keep a record in history table
     data['properties']['deleted_at'] = datetime.now()
@@ -105,6 +107,8 @@ def update_draft(draft, data):
 def delete_draft(id):
 
     draft = session.query(Draft).get(id)
+    if not draft:
+        raise Exception('Draft not found')
     session.delete(draft)
     session.commit()
     log.info('Deleted draft %s', id)
@@ -136,6 +140,8 @@ def update_harvested_item(harvest, data):
 def delete_harvested_item(id):
 
     harvest = session.query(Harvest).get(id)
+    if not harvest:
+        raise Exception('Harvest item not found')
     session.delete(harvest)
     session.commit()
     log.info('Deleted harvest %s', id)
