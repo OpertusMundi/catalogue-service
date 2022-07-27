@@ -36,6 +36,7 @@ class ItemCollection(Resource):
             actions.validate_input(data)
             id = actions.create_draft(data)
         except Exception as ex:
+            current_app.logger.error('Error creating draft: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -70,6 +71,7 @@ class Status(Resource):
         try:
             actions.update_status(id, status)
         except NoResultFound:
+            current_app.logger.error('Draft {} not found.'.format(id))
             return{
                 'success': False,
                 'message': {
@@ -78,6 +80,7 @@ class Status(Resource):
                 }
             }, 404
         except Exception as ex:
+            current_app.logger.error('Error updating status: ' + str(ex))
             return{
                 'success': False,
                 'message': {
@@ -107,6 +110,7 @@ class ItemUnit(Resource):
         try:
             result = Item.query.filter(Item.id == id).one()
         except NoResultFound:
+            current_app.logger.error('No items found')
             return {
                 'success': False,
                 'message': {
@@ -119,11 +123,12 @@ class ItemUnit(Resource):
         try:
             history = History.query.filter(History.id == id).order_by((History.metadata_version).desc())
         except Exception as ex:
+            current_app.logger.error('Error getting published item and all versions:  ' + str(ex))
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'Error: ' + ex
+                    'description': 'Error getting published item and all versions: ' + str(ex)
                 }
             }, 404
         versions = [result.version]
@@ -170,6 +175,7 @@ class ItemUnit(Resource):
         try:
             actions.delete_item(id)
         except Exception as ex:
+            current_app.logger.error('Delete failed: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -198,14 +204,16 @@ class ItemUnit(Resource):
             item = Item.query.filter(Item.id == id).one()
             actions.create_draft_from_item(item)
         except NoResultFound:
+            current_app.logger.error('Published item {} not found'.format(id))
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'Published item not found.'
+                    'description': 'Published item {} not found.'.format(id)
                 }
             }, 404
         except IntegrityError:
+            current_app.logger.error('Draft for this published item already exists')
             return {
                 'success': False,
                 'message': {
@@ -214,6 +222,7 @@ class ItemUnit(Resource):
                 }
             }, 400
         except Exception as ex:
+            current_app.logger.error('Draft creation failed: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -239,6 +248,7 @@ class ItemUnit(Resource):
         try:
             result = Draft.query.filter(Draft.id == id).one()
         except NoResultFound:
+            current_app.logger.error('Draft not found')
             return {
                 'success': False,
                 'message': {
@@ -278,6 +288,7 @@ class ItemUnit(Resource):
             draft = Draft.query.filter(Draft.id == id).one()
             actions.update_draft(draft, data)
         except NoResultFound:
+            current_app.logger.error('Draft not found')
             return {
                 'success': False,
                 'message': {
@@ -286,6 +297,7 @@ class ItemUnit(Resource):
                 }
             }, 404
         except Exception as ex:
+            current_app.logger.error('Error updating draft: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -301,7 +313,7 @@ class ItemUnit(Resource):
             }
         }, 200
 
-    @api.response(400, 'Delete failed')
+    @api.response(400, 'Draft delete failed')
     @api.response(200, 'Draft successfully deleted.')
     def delete(self, id):
         """
@@ -310,11 +322,12 @@ class ItemUnit(Resource):
         try:
             actions.delete_draft(id)
         except Exception as ex:
+            current_app.logger.error('Draft delete failed: ' + str(ex))
             return {
                 'success': False,
                 'message': {
                     'code': 400,
-                    'description': 'Delete failed: ' + str(ex)
+                    'description': 'Draft delete failed: ' + str(ex)
                 }
             }, 400
         return {
@@ -337,6 +350,7 @@ class HarvestUnit(Resource):
         try:
             result = Harvest.query.filter(Harvest.id == id).one()
         except NoResultFound:
+            current_app.logger.error('Harvested item not found')
             return {
                 'success': False,
                 'message': {
@@ -378,16 +392,17 @@ class HarvestUnit(Resource):
     @api.response(404, 'Harvested item not found.')
     def delete(self, id):
         """
-        Deletes a item.
+        Deletes a harvested item.
         """
         try:
             actions.delete_harvested_item(id)
         except Exception as ex:
+            current_app.logger.error('Harvested item delete failed: ' + str(ex))
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'Delete faled: ' + str(ex)
+                    'description': 'Harvested item delete faled: ' + str(ex)
                 }
             }, 404
         return {
@@ -427,6 +442,7 @@ class ItemUnit(Resource):
             try: 
                 result =  Item.query.filter(Item.id == id).filter(Item.version == version).one()
             except NoResultFound:
+                current_app.logger.error('Item version was not found: ')
                 return {
                     'success': False,
                     'message': {
@@ -711,6 +727,7 @@ class ItemCollection(Resource):
                 item = Item.query.filter(Item.id == b.bundle_id).one()
                 result.append(item.item_geojson)
         except Exception as ex:
+            current_app.logger.error('Error searching for bundles: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -870,6 +887,7 @@ class HarvestCollection(Resource):
         try:
             total = harvest(url, harvester)
         except Exception as ex:
+            current_app.logger.error('Error harvesting: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -889,7 +907,7 @@ class HarvestCollection(Resource):
 class ItemCollection(Resource):
     @api.expect(p.iso_arg)
     @api.response(200, 'Draft successfully created.')
-    @api.response(400, 'Error creating draft.')
+    @api.response(400, 'Draft creation failed')
     def post(self):
         """
         Creates a new item (draft) from iso(xml).
@@ -903,11 +921,12 @@ class ItemCollection(Resource):
             actions.validate_input(converted_data)
             id = actions.create_draft(converted_data)
         except Exception as ex:
+            current_app.logger.error(': ' + str(ex))
             return {
-                'success': True,
+                'success': False,
                 'message': {
                     'code': 400,
-                    'description': str(ex)
+                    'description': 'Draft creation failed: ' + str(ex)
                 }
             }, 400
         return {
@@ -921,7 +940,7 @@ class ItemCollection(Resource):
 
 @ns.route('/draft/create_from_harvest/<string:id>')
 class ItemUnit(Resource):
-    @api.response(404, 'Published item not found.')
+    @api.response(404, 'Harvested item not found.')
     @api.response(400, 'Draft creation failed')
     @api.response(200, 'Draft successfully created.')
     def post(self, id):
@@ -933,14 +952,16 @@ class ItemUnit(Resource):
             actions.create_draft_from_item(harvest)
             actions.delete_harvested_item(harvest.id)
         except NoResultFound:
+            current_app.logger.error('Harvested item not found.')
             return {
                 'success': False,
                 'message': {
                     'code': 404,
-                    'description': 'Harvest item not found.'
+                    'description': 'Harvested item not found.'
                 }
             }, 404
         except IntegrityError:
+            current_app.logger.error('Draft for this harvested item already exists')
             return {
                 'success': False,
                 'message': {
@@ -949,6 +970,7 @@ class ItemUnit(Resource):
                 }
             }, 400
         except Exception as ex:
+            current_app.logger.error('Draft creation failed: ' + str(ex))
             return {
                 'success': False,
                 'message': {
@@ -977,11 +999,12 @@ class Validate(Resource):
         try:
             actions.validate_input(data)
         except Exception as ex:
+            current_app.logger.error('Error validating schema: ' + str(ex))
             return {
-                'success': True,
+                'success': False,
                 'message': {
                     'code': 400,
-                    'description': str(ex)
+                    'description': 'Error validating schema: ' + str(ex)
                 }
             }, 400
 
