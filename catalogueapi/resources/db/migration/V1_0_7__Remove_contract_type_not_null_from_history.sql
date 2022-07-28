@@ -1,0 +1,1 @@
+ALTER TABLE "public".history ALTER "contract_template_type" DROP NOT NULL;
