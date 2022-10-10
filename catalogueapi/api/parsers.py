@@ -10,6 +10,8 @@ pub_search_args.add_argument('publisher_id', type=str, required=False, default="
 pub_search_args.add_argument('q', type=str, required=False, default="", help='Search query')
 pub_search_args.add_argument('bbox', type=str, required=False, default="", help='Bounding box')
 pub_search_args.add_argument('time', type=str, required=False, default="", help='Time extent')
+pub_search_args.add_argument('orderBy', type=str, required=False, default="TITLE", help='Order by element (TITLE, DATE_PUBLISHED, TYPE)')
+pub_search_args.add_argument('order', type=str, required=False, default="ASC", help='ASC/DESC')
 pub_search_args.add_argument('page', type=int, required=False, default=1, help='Page number')
 pub_search_args.add_argument('per_page', type=int, required=False,
                                   default=5, help='Results per page }')

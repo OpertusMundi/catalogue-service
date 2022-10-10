@@ -476,6 +476,8 @@ class ItemCollection(Resource):
         publisher_id = args.get('publisher_id')
         q = args.get('q')
         bbox = args.get('bbox')
+        orderBy = args.get('orderBy')
+        order = args.get('order')
         time = args.get('time')
         page = args.get('page')
         per_page = args.get('per_page')
@@ -506,11 +508,18 @@ class ItemCollection(Resource):
             items = items.filter(Item.date_start >= time_start).filter(
                 Item.date_end <= time_end)
 
+        # Order by 
+        if orderBy == 'TITLE':
+            items = items.order_by((Item.title).asc()) if order=='ASC' else items.order_by((Item.title).desc())
+        elif orderBy == 'DATE_PUBLISHED':
+            items = items.order_by((Item.publication_date).asc()) if order=='ASC' else items.order_by((Item.publication_date).desc())
+        elif orderBy == 'TYPE':
+            items = items.order_by((Item.type).asc()) if order=='ASC' else items.order_by((Item.type).desc()) 
+
         # Add pagination
         result = items.paginate(page, per_page, error_out=False)
 
         items_geojson = []
-
         # Post-process to get item_geojson
         if result.items:
             for i in result.items:
