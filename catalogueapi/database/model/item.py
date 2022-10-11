@@ -39,11 +39,11 @@ class ItemModel(db.Model):
     publisher_email = db.Column('publisher_email', db.Text, index=True)
     publisher_id = db.Column('publisher_id', db.Text, index=True)
     language = db.Column('language', db.Text, index=True)
-    date_start = db.Column('date_start', db.Date, index=True)
-    date_end = db.Column('date_end', db.Date, index=True)
-    creation_date = db.Column('creation_date', db.Date, index=True)
-    publication_date = db.Column('publication_date', db.Date, index=True)
-    revision_date = db.Column('revision_date', db.Date, index=True)
+    date_start = db.Column('date_start', db.DateTime, index=True)
+    date_end = db.Column('date_end', db.DateTime, index=True)
+    creation_date = db.Column('creation_date', db.DateTime, index=True)
+    publication_date = db.Column('publication_date', db.DateTime, index=True)
+    revision_date = db.Column('revision_date', db.DateTime, index=True)
 
     geographic_location = db.Column('geographic_location', Geometry(
         geometry_type='POLYGON'), index=True)
@@ -68,7 +68,7 @@ class ItemModel(db.Model):
         'metadata_point_of_contact_name', db.Text, index=True)
     metadata_point_of_contact_email = db.Column(
         'metadata_point_of_contact_email', db.Text, index=True)
-    metadata_date = db.Column('metadata_date', db.Date, index=True)
+    metadata_date = db.Column('metadata_date', db.DateTime, index=True)
     metadata_version = db.Column('metadata_version', db.Text, index=True)
     resources = db.Column('resources', ARRAY(JSONB))
     lineage = db.Column('lineage', db.Text, index=True)
@@ -96,9 +96,9 @@ class ItemModel(db.Model):
     vetting_required = db.Column('vetting_required', db.Boolean, default=False)
     ingestion_info = db.Column('ingestion_info', ARRAY(JSONB))
 
-    created_at = db.Column('created_at', db.Date, index=True)
-    submitted_at = db.Column('submitted_at', db.Date, index=True)
-    accepted_at = db.Column('accepted_at', db.Date, index=True)
+    created_at = db.Column('created_at', db.DateTime, index=True)
+    submitted_at = db.Column('submitted_at', db.DateTime, index=True)
+    accepted_at = db.Column('accepted_at', db.DateTime, index=True)
 
     visibility = db.Column('visibility', ARRAY(db.Text), index=True)
 
@@ -175,7 +175,7 @@ class History(ItemModel):
 
     deleted = db.Column('deleted', db.Boolean)
 
-    deleted_at = db.Column('deleted_at', db.Date, index=True)
+    deleted_at = db.Column('deleted_at', db.DateTime, index=True)
 
 
 

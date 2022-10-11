@@ -152,7 +152,8 @@ def update_status(id, status):
     draft = Draft.query.filter(Draft.id == id).one()
     data = draft.item_geojson
     if status == 'published':
-        data['properties']['publication_date'] = datetime.now()
+        if not data['properties']['publication_date']:
+            data['properties']['publication_date'] = datetime.now()
         item = session.query(Item).get(id)
         if item:
             # keep a record in history table
