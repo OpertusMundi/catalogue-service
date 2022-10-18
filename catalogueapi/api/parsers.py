@@ -7,6 +7,7 @@ pagination_args.add_argument('per_page', type=int, required=False,
 
 pub_search_args = reqparse.RequestParser()
 pub_search_args.add_argument('publisher_id', type=str, required=False, default="", help='Publisher id')
+pub_search_args.add_argument('type', type=str, required=False, default="", action='split', help='Asset type(BUNDLE-NETCDF-RASTER-SERVICE-TABULAR-VECTOR-SENTINEL_HUB_OPEN_DATA-SENTINEL_HUB_COMMERCIAL_DATA)')
 pub_search_args.add_argument('q', type=str, required=False, default="", help='Search query')
 pub_search_args.add_argument('bbox', type=str, required=False, default="", help='Bounding box')
 pub_search_args.add_argument('time', type=str, required=False, default="", help='Time extent')

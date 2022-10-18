@@ -474,6 +474,7 @@ class ItemCollection(Resource):
         args = p.pub_search_args.parse_args(request)
 
         publisher_id = args.get('publisher_id')
+        type = args.get('type')
         q = args.get('q')
         bbox = args.get('bbox')
         orderBy = args.get('orderBy')
@@ -488,6 +489,11 @@ class ItemCollection(Resource):
         # Search by publisher
         if publisher_id:
             items = items.filter(Item.publisher_id == publisher_id)
+
+        # Search by asset type
+        if type:
+            lc_type = [x.lower() for x in type]
+            items = items.filter(Item.type.in_(lc_type))
 
         # Add filtering (optional)
         if q and q.strip() != "":
