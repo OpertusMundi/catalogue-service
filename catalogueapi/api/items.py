@@ -739,8 +739,8 @@ class ItemCollection(Resource):
             bundles = Asset_in_bundle.query.filter(Asset_in_bundle.asset_id == id).all()
             result = []
             for b in bundles:
-                item = Item.query.filter(Item.id == b.bundle_id).one()
-                result.append(item.item_geojson)
+                item = Item.query.filter(Item.id == b.bundle_id).all()
+                if item: result.append(item[0].item_geojson)
         except Exception as ex:
             current_app.logger.error('Error searching for bundles: ' + str(ex))
             return {
