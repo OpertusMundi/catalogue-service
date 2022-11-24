@@ -118,6 +118,11 @@
       "description": "Name of entity responsible for making the resource available",
       "type": "string"
     },
+    "publisher_id": {
+      "title": "Resource Publisher Identifier",
+      "description": "Identifier of entity responsible for making the resource available",
+      "type": "string"
+    },
     "publisher_email": {
       "title": "Resource Publisher E-mail",
       "description": "E-mail of entity responsible for making the resource available",
