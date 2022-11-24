@@ -125,6 +125,7 @@ properties = api.model('properties of an item', {
     'spatial_resolution': fields.Integer(description='Spatial resolution refers to the level of detail of the data set'),
     'scales':  fields.List(fields.Nested(scale,description='Scale refers to the level of detail of the data set')),
     'conformity': fields.String(description='Degree of conformity with the implementing rules/standard of the metadata followed', enum=["conformant", "not conformant", "not evaluated"]),
+    'conformity_standard': fields.String(description='Title of the implementing rules/standard the resource conforms to'),
     'additional_resources':  fields.List(fields.Nested(additional_resources,description='Auxiliary files or additional resources to the dataset.')),
     'public_access_limitations': fields.String(description='Information on the limitations and the reasons for them'),
     'version': fields.String( description='Version of the resource'),

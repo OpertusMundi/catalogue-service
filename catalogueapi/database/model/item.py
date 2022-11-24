@@ -58,6 +58,7 @@ class ItemModel(db.Model):
     scales = db.Column('scale', ARRAY(JSONB))
     version = db.Column('version', db.Text, index=True)
     conformity = db.Column('conformity', db.Text, index=True)
+    conformity_standard = db.Column('conformity_standard', db.Text, index=True)
     additional_resources = db.Column(
         'additional_resources', ARRAY(JSONB))
     public_access_limitations = db.Column(
