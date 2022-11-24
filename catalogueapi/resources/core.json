@@ -216,6 +216,11 @@
       "type": "string",
       "enum": ["conformant", "not conformant", "not evaluated"]
     },
+    "conformity_standard": {
+      "title": "Standard of Resource Conformity",
+      "description": "Title of the implementing rules/standard the resource conforms to",
+      "type": "string"
+    },
     "additional_resources": {
       "title": "Additional Resources",
       "description": "Auxiliary files or additional resources to the dataset",
