@@ -85,6 +85,7 @@ class ItemModel(db.Model):
     pricing_models = db.Column('pricing_models', JSONB)
     statistics = db.Column('statistics', JSONB)
     delivery_method = db.Column('delivery_method', db.Text, index=True)
+    delivery_method_options = db.Column('delivery_method_options', JSONB)
 
     responsible_party = db.Column('responsible_party', JSONB)
 

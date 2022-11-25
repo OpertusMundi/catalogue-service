@@ -157,6 +157,7 @@ properties = api.model('properties of an item', {
     'pricing_models': fields.List(fields.Raw(description='Pricing models of the dataset (JSON)')),
     'statistics': fields.Raw(description='Statistics about the store (JSON))'),
     'delivery_method': fields.String(readOnly=True, description='Delivery method of the asset', enum = ["digital_platform", "digital_provider", "physical_provider", "none"]),
+    'delivery_method_options': fields.Raw(description='Delivery method options of the item'),
     'versions':  fields.List(fields.String(), description='All versions of the resource'),
 
     'extensions': fields.Raw(description='Collection of custom properties required for external data provider integration (JSON)'),
