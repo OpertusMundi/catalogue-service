@@ -54,6 +54,11 @@
       "description": "Delivery method of the item: digital platform - digital provider - physical provider",
       "type": "string"
     },
+    "delivery_method_options": {
+      "title": "Delivery method options",
+      "description": "Delivery method options of the item",
+      "type": "object"
+    },
     "ingestion_info": {
       "title": "Ingestion info",
       "description": "Ingestion information",
