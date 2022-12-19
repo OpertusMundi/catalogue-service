@@ -7,7 +7,7 @@ from flask_restx import Resource
 from flask_restx import marshal
 import catalogueapi.database.actions.item as actions
 from catalogueapi.database.actions.harvest import harvest
-from catalogueapi.api.serializers import item_geojson, page_of_items
+from catalogueapi.api.serializers import item_geojson, page_of_items, list_of_pairs
 import catalogueapi.api.parsers as p
 from catalogueapi.api.restx import api
 from catalogueapi.database.model.item import Asset_in_bundle, Item, Draft, History, Harvest
@@ -459,6 +459,57 @@ class ItemUnit(Resource):
                 'description': 'Item version found'
             }
         }, 200
+
+@ns.route('/history/get_list')
+class ItemUnit(Resource):
+    @api.response(404, 'Versions of the items were found.')
+    @api.response(200, 'Version of the items were not found.')
+    @api.expect(list_of_pairs)
+    def post(self):
+        """
+        Returns a specific version for each item id and version pair.
+        """
+
+        id_version_pairs = request.json.get('id_version_pairs')
+        item_list = []
+        for i in id_version_pairs:
+            result = History.query.filter(History.id == i.get('id')).filter(History.version == i.get('version')).all()
+            if result:
+                # select latest metadata version
+                latest_item =  result[0]
+                latest_version = int(latest_item.metadata_version.split('.')[-1])
+                for item in result:
+                    vers = int(item.metadata_version.split('.')[-1])
+                    if vers > latest_version:
+                        latest_version = vers
+                        latest_item = item
+                result = latest_item
+                item_list.append(result.item_geojson)
+            else:   
+                # search in published
+                try: 
+                    result =  Item.query.filter(Item.id == i.get('id')).filter(Item.version == i.get('version')).one()
+                    item_list.append(result.item_geojson)
+                except NoResultFound:
+                    continue
+            
+        if item_list:
+            return {
+                'result': item_list,
+                'success': True,
+                'message': {
+                    'code': 200,
+                    'description': 'Versions of the items were found.'
+                }
+            }, 200
+        else:
+            return {
+                    'success': False,
+                    'message': {
+                        'code': 404,
+                        'description': 'Versions of the items were not found.'
+                    }
+                }, 404
 
 @ns.route('/published/search')
 @api.response(404, 'No items found for this query')

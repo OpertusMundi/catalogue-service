@@ -180,3 +180,11 @@ page_of_items = api.model('a page of results', {
     'total': fields.Integer(description='Total number of results'),
 })
 
+id_version_pairs = api.model('history id-version pairs', {
+    'id': fields.String(description='id'),
+    'version': fields.String(description='version'),
+})
+
+list_of_pairs = api.model('list of history id-version pairs', {
+    'id_version_pairs': fields.List(fields.Nested(id_version_pairs, description='Id-version pairs for history search')),
+}) 
