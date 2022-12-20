@@ -473,7 +473,12 @@ class ItemUnit(Resource):
         id_version_pairs = request.json.get('id_version_pairs')
         item_list = []
         for i in id_version_pairs:
-            result = History.query.filter(History.id == i.get('id')).filter(History.version == i.get('version')).all()
+            query = History.query.filter(History.id == i.get('id'))
+
+            if not i.get('version') is None and len(i.get('version')) != 0:
+                query = query.filter(History.version == i.get('version'))
+
+            result = query.all()
             if result:
                 # select latest metadata version
                 latest_item =  result[0]
